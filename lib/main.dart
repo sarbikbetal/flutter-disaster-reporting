@@ -13,7 +13,7 @@ class Landing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Hello guys',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
