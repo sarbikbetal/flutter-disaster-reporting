@@ -15,7 +15,7 @@ class Landing extends StatelessWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.teal,
+          primarySwatch: Colors.blue,
         ),
         // home: Home(),
         routes: {
