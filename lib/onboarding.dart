@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class OnBoardingActivity extends StatelessWidget {
+class OnBoardingActivity extends StatefulWidget {
+  @override
+  _OnBoardingActivityState createState() => _OnBoardingActivityState();
+}
+
+class _OnBoardingActivityState extends State<OnBoardingActivity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

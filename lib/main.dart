@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:disaster_reporting/onboarding.dart';
 
 // Account and Auth
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:disaster_reporting/auth/login.dart';
 import 'package:disaster_reporting/auth/signup.dart';
 
