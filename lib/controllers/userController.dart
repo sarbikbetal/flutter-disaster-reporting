@@ -2,8 +2,11 @@ import 'package:disaster_reporting/models/user.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 
+
+String url = 'https://srbk-mini-project.herokuapp.com/user/' ;
+
 Future<Map<String, dynamic>> userSignin(Agency user) async {
-  String url = 'https://srbk-mini-project.herokuapp.com/user/signin';
+  String route = url + 'signin';
   Map<String, String> headers = {"Content-type": "application/json"};
 
   Map<String, dynamic> userMap = {
@@ -12,7 +15,11 @@ Future<Map<String, dynamic>> userSignin(Agency user) async {
   };
 
   String json = jsonEncode(userMap);
-  Response response = await post(url, headers: headers, body: json);
-  Map<String, dynamic> result = jsonDecode(response.body);
+  Response response = await post(route, headers: headers, body: json);
+  Map<String, dynamic> result;
+  if (response.statusCode == 200) {
+    result = jsonDecode(response.body);
+  } else
+    result = {"msg": "Invalid username/password"};
   return result;
 }

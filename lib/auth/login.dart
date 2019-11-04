@@ -13,61 +13,127 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  String _apiKey;
+  String _token;
   Agency _user = Agency();
+  bool _invisiblePwd = true;
+
+  @override
+  void initState() {
+    getKey();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    getKey();
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('Login'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            child: Text(_apiKey.toString()),
-          ),
-          Builder(
-            builder: (context) => Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Licence'),
-                      onSaved: (val) => _user.licence = val,
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Login',
+                    style: TextStyle(fontSize: 72.0),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      size: 48.0,
+                      color: Colors.red[400],
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Password'),
-                      onSaved: (val) => setState(() => _user.psswd = val),
-                      obscureText: true,
-                    ),
-                  ],
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Text(_token.toString()),
+            ),
+            Builder(
+              builder: (context) => Form(
+                key: _formKey,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.teal[100],
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.teal,
+                            ),
+                          ),
+                          labelText: 'Licence',
+                          prefixIcon: Icon(Icons.credit_card),
+                        ),
+                        onSaved: (val) => _user.licence = val,
+                      ),
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: Icon(
+                            Icons.vpn_key,
+                          ),
+                          suffixIcon: IconButton(
+                              color: Colors.black54,
+                              padding: EdgeInsets.all(1.0),
+                              icon: this._invisiblePwd
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  this._invisiblePwd = !this._invisiblePwd;
+                                });
+                              }),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.teal[100],
+                            ),
+                          ),
+                          focusColor: Colors.blue,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        onSaved: (val) => setState(() => _user.psswd = val),
+                        obscureText: this._invisiblePwd,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Row(
-            children: <Widget>[
-              Center(
-                child: MaterialButton(
-                  child: Text('Login'),
-                  onPressed: () {
-                    final form = _formKey.currentState;
-                    form.save();
-                    handleLogin();
-                  },
-                ),
-              )
-            ],
-          )
-        ],
+            Row(
+              children: <Widget>[
+                Center(
+                  child: MaterialButton(
+                    child: Text('Login'),
+                    onPressed: () {
+                      final form = _formKey.currentState;
+                      form.save();
+                      handleLogin();
+                    },
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -75,7 +141,7 @@ class _LoginState extends State<Login> {
   getKey() async {
     String key = await storage.read(key: 'auth_token');
     setState(() {
-      _apiKey = key;
+      _token = key;
     });
   }
 
@@ -83,11 +149,14 @@ class _LoginState extends State<Login> {
     Map<String, dynamic> result = await userSignin(_user);
     if (result['auth_token'] != null) {
       setState(() {
-        this._apiKey = result['auth_token'];
+        this._token = result['auth_token'];
       });
-      await storage.write(key: 'auth_token', value: _apiKey);
+      await storage.write(key: 'auth_token', value: _token);
     } else {
-      print(result['msg']);
+      setState(() {
+        this._token = result['msg'];
+      });
+      await storage.delete(key: 'auth_token');
     }
   }
 }

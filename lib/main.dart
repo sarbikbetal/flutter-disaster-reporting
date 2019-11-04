@@ -11,7 +11,6 @@ import 'package:disaster_reporting/pages/unAuthFeed.dart';
 import 'package:disaster_reporting/pages/contributions.dart';
 import 'package:disaster_reporting/pages/account.dart';
 
-
 // Create storage
 // final storage = new FlutterSecureStorage();
 
@@ -23,8 +22,11 @@ class Landing extends StatelessWidget {
     return MaterialApp(
         title: 'Hello guys',
         theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
+            primarySwatch: Colors.green,
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+              buttonColor: Colors.red,
+            )),
         // home: Home(),
         routes: {
           '/': (context) => OnBoardingActivity(),

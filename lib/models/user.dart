@@ -12,6 +12,5 @@ class Agency {
     this.psswd,
     this.address,
     this.contact,
-    this.token,
   });
 }
