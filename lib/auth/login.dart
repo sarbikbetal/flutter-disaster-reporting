@@ -68,6 +68,7 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -88,6 +89,7 @@ class _LoginState extends State<Login> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(
@@ -129,11 +131,13 @@ class _LoginState extends State<Login> {
                 Center(
                   child: MaterialButton(
                     child: Text('Login'),
-                    onPressed: () {
-                      final form = _formKey.currentState;
-                      form.save();
-                      handleLogin();
-                    },
+                    onPressed: this._isLoading
+                        ? null
+                        : () {
+                            final form = _formKey.currentState;
+                            form.save();
+                            handleLogin();
+                          },
                   ),
                 )
               ],
@@ -163,12 +167,14 @@ class _LoginState extends State<Login> {
         this._isLoading = false;
       });
       await storage.write(key: 'auth_token', value: _token);
+      await storage.write(key: 'prompted', value: 'true');
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       setState(() {
         this._token = result['msg'];
         this._isLoading = false;
       });
-      await storage.delete(key: 'auth_token');
+      storage.deleteAll();
     }
   }
 }

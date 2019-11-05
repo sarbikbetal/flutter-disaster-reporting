@@ -5,7 +5,6 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:disaster_reporting/pages/feed.dart';
 import 'package:disaster_reporting/pages/contributions.dart';
 import 'package:disaster_reporting/pages/account.dart';
-import 'package:disaster_reporting/pages/unAuthFeed.dart';
 
 class PageWrapper extends StatefulWidget {
   @override

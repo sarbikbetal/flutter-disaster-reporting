@@ -203,8 +203,9 @@ class _SignUpState extends State<SignUp> {
     Map<String, dynamic> result = await userSignup(_user);
     if (result['auth_token'] != null) {
       await storage.write(key: 'auth_token', value: _token);
+      await storage.write(key: 'prompted', value: 'true');
     } else {
-      await storage.delete(key: 'auth_token');
+      await storage.deleteAll();
     }
   }
 }

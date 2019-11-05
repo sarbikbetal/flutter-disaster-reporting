@@ -14,7 +14,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
   @override
   void initState() {
     super.initState();
-    getKey();
+    handleNavigation();
   }
 
   @override
@@ -123,13 +123,12 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           FlatButton(
-                            child: Text(
-                              "Skip",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                            onPressed: () =>
-                                Navigator.pushReplacementNamed(context, '/dashboard')
-                          ),
+                              child: Text(
+                                "Skip",
+                                style: TextStyle(color: Colors.black54),
+                              ),
+                              onPressed: () => Navigator.pushReplacementNamed(
+                                  context, '/dashboard')),
                         ],
                       )
                     ],
@@ -143,10 +142,14 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
     );
   }
 
-  getKey() async {
-    String key = await storage.read(key: 'auth_token');
-    setState(() {
-      _token = key;
-    });
+  void handleNavigation() async {
+    String prompt = await storage.read(key: 'prompted');
+    if (prompt != null) {
+      String key = await storage.read(key: 'auth_token');
+      if (key == null)
+        await Navigator.pushNamed(context, '/noauth');
+      else
+        await Navigator.pushReplacementNamed(context, '/dashboard');
+    }
   }
 }
