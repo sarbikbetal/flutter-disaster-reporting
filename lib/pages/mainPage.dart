@@ -24,11 +24,6 @@ class _PageWrapperState extends State<PageWrapper> {
         children: <Widget>[Contributions(), Feed(), MyAccount()],
         onPageChanged: (index) => setState(() {
           this._pageIndex = index;
-          _controller.animateToPage(
-            index,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.fastOutSlowIn,
-          );
         }),
       ),
       bottomNavigationBar: Padding(
@@ -41,7 +36,7 @@ class _PageWrapperState extends State<PageWrapper> {
             _controller.animateToPage(
               index,
               duration: Duration(milliseconds: 300),
-              curve: Curves.easeInCubic,
+              curve: Curves.fastOutSlowIn,
             );
           }),
           items: [

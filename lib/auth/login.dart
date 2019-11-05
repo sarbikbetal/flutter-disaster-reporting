@@ -13,7 +13,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  String _token;
+  String _token = ' ';
   Agency _user = Agency();
   bool _invisiblePwd = true;
   bool _isLoading = false;
@@ -51,8 +51,13 @@ class _LoginState extends State<Login> {
                 ],
               ),
             ),
-            Container(
-              child: Text(_token.toString()),
+            Padding(
+              padding: EdgeInsets.all(32.0),
+              child: SizedBox(
+                child: _isLoading
+                    ? LinearProgressIndicator()
+                    : Text(_token.toString()),
+              ),
             ),
             Builder(
               builder: (context) => Form(
@@ -127,7 +132,6 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       final form = _formKey.currentState;
                       form.save();
-                      // _settingModalBottomSheet(context);
                       handleLogin();
                     },
                   ),
@@ -142,46 +146,29 @@ class _LoginState extends State<Login> {
 
   getKey() async {
     String key = await storage.read(key: 'auth_token');
-    setState(() {
-      _token = key;
-    });
+    if (key != null)
+      setState(() {
+        _token = key;
+      });
   }
 
   handleLogin() async {
+    setState(() {
+      this._isLoading = true;
+    });
     Map<String, dynamic> result = await userSignin(_user);
     if (result['auth_token'] != null) {
       setState(() {
         this._token = result['auth_token'];
+        this._isLoading = false;
       });
       await storage.write(key: 'auth_token', value: _token);
     } else {
       setState(() {
         this._token = result['msg'];
+        this._isLoading = false;
       });
       await storage.delete(key: 'auth_token');
     }
   }
-}
-
-void _settingModalBottomSheet(context) {
-  showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        
-        return Container(
-          child: new Wrap(
-            children: <Widget>[
-              new ListTile(
-                  leading: new Icon(Icons.music_note),
-                  title: new Text('Music'),
-                  onTap: () => {}),
-              new ListTile(
-                leading: new Icon(Icons.videocam),
-                title: new Text('Video'),
-                onTap: () => {},
-              ),
-            ],
-          ),
-        );
-      });
 }

@@ -17,7 +17,6 @@ class Landing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Hello guys',
         theme: ThemeData(
             primarySwatch: Colors.green,
             buttonTheme: ButtonThemeData(
