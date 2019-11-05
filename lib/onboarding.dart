@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 class OnBoardingActivity extends StatefulWidget {
   @override
@@ -7,6 +9,14 @@ class OnBoardingActivity extends StatefulWidget {
 }
 
 class _OnBoardingActivityState extends State<OnBoardingActivity> {
+  String _token;
+
+  @override
+  void initState() {
+    super.initState();
+    getKey();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +52,9 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
             delegate: SliverChildListDelegate(<Widget>[
               SizedBox(
                 height: 220.0,
+                child: Center(
+                  child: Text((this._token != null) ? this._token : ''),
+                ),
               ),
               Container(
                 child: Padding(
@@ -115,7 +128,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                               style: TextStyle(color: Colors.black54),
                             ),
                             onPressed: () =>
-                                Navigator.pushNamed(context, '/unreg'),
+                                Navigator.pushReplacementNamed(context, '/dashboard')
                           ),
                         ],
                       )
@@ -128,5 +141,12 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
         ],
       ),
     );
+  }
+
+  getKey() async {
+    String key = await storage.read(key: 'auth_token');
+    setState(() {
+      _token = key;
+    });
   }
 }

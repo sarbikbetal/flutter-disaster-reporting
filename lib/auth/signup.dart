@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
                           labelText: 'Contact',
                           prefixIcon: Icon(Icons.phone),
                         ),
-                        onSaved: (val) => _user.licence = val,
+                        onSaved: (val) => _user.contact = int.parse(val),
                       ),
                       SizedBox(
                         height: 16.0,
@@ -187,7 +187,7 @@ class _SignUpState extends State<SignUp> {
                     onPressed: () {
                       final form = _formKey.currentState;
                       form.save();
-                      // handleLogin();
+                      handleLogin();
                     },
                   ),
                 ),
@@ -197,5 +197,14 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  handleLogin() async {
+    Map<String, dynamic> result = await userSignup(_user);
+    if (result['auth_token'] != null) {
+      await storage.write(key: 'auth_token', value: _token);
+    } else {
+      await storage.delete(key: 'auth_token');
+    }
   }
 }

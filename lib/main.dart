@@ -6,10 +6,7 @@ import 'package:disaster_reporting/auth/login.dart';
 import 'package:disaster_reporting/auth/signup.dart';
 
 // Main Routes
-import 'package:disaster_reporting/pages/feed.dart';
-import 'package:disaster_reporting/pages/unAuthFeed.dart';
-import 'package:disaster_reporting/pages/contributions.dart';
-import 'package:disaster_reporting/pages/account.dart';
+import 'package:disaster_reporting/pages/mainPage.dart';
 
 // Create storage
 // final storage = new FlutterSecureStorage();
@@ -32,10 +29,7 @@ class Landing extends StatelessWidget {
           '/': (context) => OnBoardingActivity(),
           '/login': (context) => Login(),
           '/signup': (context) => SignUp(),
-          '/home': (context) => Feed(),
-          '/my': (context) => Contributions(),
-          '/account': (context) => MyAccount(),
-          '/unreg': (context) => UnAuthFeed(),
+          '/dashboard': (context) => PageWrapper(),
         });
   }
 }

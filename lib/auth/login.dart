@@ -16,11 +16,12 @@ class _LoginState extends State<Login> {
   String _token;
   Agency _user = Agency();
   bool _invisiblePwd = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
-    getKey();
     super.initState();
+    getKey();
   }
 
   @override
@@ -126,6 +127,7 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       final form = _formKey.currentState;
                       form.save();
+                      // _settingModalBottomSheet(context);
                       handleLogin();
                     },
                   ),
@@ -159,4 +161,27 @@ class _LoginState extends State<Login> {
       await storage.delete(key: 'auth_token');
     }
   }
+}
+
+void _settingModalBottomSheet(context) {
+  showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        
+        return Container(
+          child: new Wrap(
+            children: <Widget>[
+              new ListTile(
+                  leading: new Icon(Icons.music_note),
+                  title: new Text('Music'),
+                  onTap: () => {}),
+              new ListTile(
+                leading: new Icon(Icons.videocam),
+                title: new Text('Video'),
+                onTap: () => {},
+              ),
+            ],
+          ),
+        );
+      });
 }

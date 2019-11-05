@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 class Contributions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+    return Center(
+      child: Text(
+        "Contributions",
+        style: TextStyle(
+          fontSize: 36.0,
         ),
-        title: Text('Contributions'),
       ),
     );
   }

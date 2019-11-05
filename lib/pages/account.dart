@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 class MyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('MyAccount'),
+    return Center(
+      child: Text(
+        "Account",
+        style: TextStyle(fontSize: 36.0, fontFamily: 'Monospace'),
       ),
     );
   }
