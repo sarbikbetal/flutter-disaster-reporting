@@ -14,9 +14,10 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
-  String _token;
+  String _message = '';
   Agency _user = Agency();
   bool _invisiblePwd = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,14 @@ class _SignUpState extends State<SignUp> {
                 ],
               ),
             ),
+            Padding(
+              padding: EdgeInsets.all(32.0),
+              child: SizedBox(
+                child: _isLoading
+                    ? LinearProgressIndicator()
+                    : Text(this._message),
+              ),
+            ),
             Builder(
               builder: (context) => Form(
                 key: _formKey,
@@ -54,6 +63,7 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -74,6 +84,7 @@ class _SignUpState extends State<SignUp> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -94,6 +105,7 @@ class _SignUpState extends State<SignUp> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -114,6 +126,7 @@ class _SignUpState extends State<SignUp> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        enabled: !this._isLoading,
                         keyboardType: TextInputType.phone,
                         inputFormatters: <TextInputFormatter>[
                           WhitelistingTextInputFormatter.digitsOnly,
@@ -138,6 +151,7 @@ class _SignUpState extends State<SignUp> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        enabled: !this._isLoading,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(
@@ -184,11 +198,13 @@ class _SignUpState extends State<SignUp> {
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
                   child: MaterialButton(
                     child: Text('Register'),
-                    onPressed: () {
-                      final form = _formKey.currentState;
-                      form.save();
-                      handleLogin();
-                    },
+                    onPressed: this._isLoading
+                        ? null
+                        : () {
+                            final form = _formKey.currentState;
+                            form.save();
+                            handleLogin();
+                          },
                   ),
                 ),
               ],
@@ -200,12 +216,24 @@ class _SignUpState extends State<SignUp> {
   }
 
   handleLogin() async {
+    setState(() {
+      this._isLoading = true;
+    });
     Map<String, dynamic> result = await userSignup(_user);
     if (result['auth_token'] != null) {
-      await storage.write(key: 'auth_token', value: _token);
+      setState(() {
+        this._message = "User registered successfully";
+        this._isLoading = false;
+      });
+      await storage.write(key: 'auth_token', value: result['auth_token']);
       await storage.write(key: 'prompted', value: 'true');
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
-      await storage.deleteAll();
+      setState(() {
+        this._message = result['msg'];
+        this._isLoading = false;
+      });
+      storage.deleteAll();
     }
   }
 }

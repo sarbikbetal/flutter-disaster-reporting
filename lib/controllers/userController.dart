@@ -40,6 +40,7 @@ Future<Map<String, dynamic>> userSignup(Agency user) async {
   if (response.statusCode == 200) {
     result = jsonDecode(response.body);
   } else
-    result = jsonDecode(response.body);
+    result = {"msg": "Error registering user"};
+  ;
   return result;
 }
