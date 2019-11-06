@@ -74,16 +74,6 @@ script:
   # Run Flutter build
   - ./flutter/bin/flutter build apk --split-per-abi
 
-after_success:
-  # Export commit info
-  - export AUTHOR_NAME=`git log -1 "$TRAVIS_COMMIT" --pretty="%aN"`
-  - export COMMITTER_NAME=`git log -1 "$TRAVIS_COMMIT" --pretty="%cN"`
-  - export COMMIT_SUBJECT=`git log -1 "$TRAVIS_COMMIT" --pretty="%s"`
-  - export COMMIT_MESSAGE=`git log -1 "$TRAVIS_COMMIT" --pretty="%b"`
-  # Upload to WeTransfer
-  - npm install --save @wetransfer/js-sdk
-  - node ./.travis/upload.js
-
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY

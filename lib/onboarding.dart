@@ -127,8 +127,11 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                                 "Skip",
                                 style: TextStyle(color: Colors.black54),
                               ),
-                              onPressed: () => Navigator.pushReplacementNamed(
-                                  context, '/dashboard')),
+                              onPressed: () {
+                                storage.write(key: 'prompted', value: 'true');
+                                Navigator.pushReplacementNamed(
+                                    context, '/noauth');
+                              }),
                         ],
                       )
                     ],
