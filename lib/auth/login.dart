@@ -13,16 +13,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  String _token = ' ';
+  String _message = ' ';
   Agency _user = Agency();
   bool _invisiblePwd = true;
   bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    getKey();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +47,16 @@ class _LoginState extends State<Login> {
             ),
             Padding(
               padding: EdgeInsets.all(32.0),
-              child: SizedBox(
+              child: Center(
                 child: _isLoading
                     ? LinearProgressIndicator()
-                    : Text(_token.toString()),
+                    : Text(
+                        this._message,
+                        style: TextStyle(
+                          color: Colors.red[400],
+                          fontSize: 16.0,
+                        ),
+                      ),
               ),
             ),
             Builder(
@@ -148,14 +148,6 @@ class _LoginState extends State<Login> {
     );
   }
 
-  getKey() async {
-    String key = await storage.read(key: 'auth_token');
-    if (key != null)
-      setState(() {
-        _token = key;
-      });
-  }
-
   handleLogin() async {
     setState(() {
       this._isLoading = true;
@@ -163,15 +155,15 @@ class _LoginState extends State<Login> {
     Map<String, dynamic> result = await userSignin(_user);
     if (result['auth_token'] != null) {
       setState(() {
-        this._token = result['auth_token'];
+        this._message = ' ';
         this._isLoading = false;
       });
-      await storage.write(key: 'auth_token', value: _token);
+      await storage.write(key: 'auth_token', value: result['auth_token']);
       await storage.write(key: 'prompted', value: 'true');
       Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       setState(() {
-        this._token = result['msg'];
+        this._message = result['msg'];
         this._isLoading = false;
       });
       storage.deleteAll();

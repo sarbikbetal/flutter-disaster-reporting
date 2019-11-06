@@ -4,6 +4,14 @@ import 'package:http/http.dart';
 
 String url = 'https://srbk-mini-project.herokuapp.com/user/';
 
+Future<Response> reqPost(route, headers, json) async {
+  try {
+    return await post(route, headers: headers, body: json);
+  } catch (e) {
+    return null;
+  }
+}
+
 Future<Map<String, dynamic>> userSignin(Agency user) async {
   String route = url + 'signin';
   Map<String, String> headers = {"Content-type": "application/json"};
@@ -14,9 +22,12 @@ Future<Map<String, dynamic>> userSignin(Agency user) async {
   };
 
   String json = jsonEncode(userMap);
-  Response response = await post(route, headers: headers, body: json);
+  Response response = await reqPost(route, headers, json);
+
   Map<String, dynamic> result;
-  if (response.statusCode == 200) {
+  if (response == null) {
+    result = {"msg": "No internet connection"};
+  } else if (response.statusCode == 200) {
     result = jsonDecode(response.body);
   } else
     result = {"msg": "Invalid username/password"};
@@ -35,9 +46,13 @@ Future<Map<String, dynamic>> userSignup(Agency user) async {
   };
 
   String json = jsonEncode(userMap);
-  Response response = await post(route, headers: headers, body: json);
+  Response response = await reqPost(route, headers, json);
+
   Map<String, dynamic> result;
-  if (response.statusCode == 200) {
+
+  if (response == null) {
+    result = {"msg": "No internet connection"};
+  } else if (response.statusCode == 200) {
     result = jsonDecode(response.body);
   } else
     result = {"msg": "Error registering user"};

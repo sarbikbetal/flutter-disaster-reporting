@@ -48,10 +48,16 @@ class _SignUpState extends State<SignUp> {
             ),
             Padding(
               padding: EdgeInsets.all(32.0),
-              child: SizedBox(
+              child: Center(
                 child: _isLoading
                     ? LinearProgressIndicator()
-                    : Text(this._message),
+                    : Text(
+                        this._message,
+                        style: TextStyle(
+                          color: Colors.red[400],
+                          fontSize: 16.0,
+                        ),
+                      ),
               ),
             ),
             Builder(
