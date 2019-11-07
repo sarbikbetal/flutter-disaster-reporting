@@ -66,8 +66,7 @@ Future<Map<String, dynamic>> userInfo(Agency user, String token) async {
   Response response;
   try {
     response = await get(route, headers: headers);
-  } catch (e) {
-  }
+  } catch (e) {}
 
   Map<String, dynamic> result;
   if (response == null) {
@@ -77,5 +76,43 @@ Future<Map<String, dynamic>> userInfo(Agency user, String token) async {
   } else {
     result = jsonDecode(response.body);
   }
+  return result;
+}
+
+Future<Map<String, dynamic>> updateUser(Agency user, String token) async {
+  String route = url + 'update';
+
+  Map<String, String> headers = {
+    "Authorization": "Bearer " + token,
+    "Content-Type": "application/json"
+  };
+
+  Map<String, dynamic> userMap = {
+    'name': user.name,
+    'licence': user.licence,
+    'address': user.address,
+    'contact': user.contact,
+    'old': user.old,
+    'psswd': user.psswd,
+  };
+
+  String json = jsonEncode(userMap);
+
+  Response response;
+  try {
+    response = await put(route, headers: headers, body: json);
+  } catch (e) {}
+
+  Map<String, dynamic> result;
+  if (response == null) {
+    result = {"msg": "No internet connection."};
+  } else if (response.statusCode == 401) {
+    result = {"msg": "Session expired, please login again."};
+  } else if (response.statusCode == 400) {
+    result = {"msg": "Please fill in all details"};
+  } else {
+    result = jsonDecode(response.body);
+  }
+  print(result);
   return result;
 }

@@ -19,6 +19,7 @@ class _MyAccountState extends State<MyAccount> {
   bool _isLoading = true;
   bool _invisiblePwd = true;
   String _message = '';
+  String _smessage = '';
 
   var nameController = TextEditingController();
   var addressController = TextEditingController();
@@ -43,19 +44,33 @@ class _MyAccountState extends State<MyAccount> {
     return ListView(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.all(32.0),
-          child: Center(
-            child: _isLoading
-                ? LinearProgressIndicator()
-                : Text(
-                    this._message,
-                    style: TextStyle(
-                      color: Colors.red[400],
-                      fontSize: 16.0,
-                    ),
-                  ),
-          ),
-        ),
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: _isLoading
+                      ? LinearProgressIndicator()
+                      : Text(
+                          this._message,
+                          style: TextStyle(
+                            color: Colors.red[400],
+                            fontSize: 16.0,
+                          ),
+                        ),
+                ),
+                Center(
+                  child: _isLoading
+                      ? Text('')
+                      : Text(
+                          this._smessage,
+                          style: TextStyle(
+                            color: Colors.green[400],
+                            fontSize: 16.0,
+                          ),
+                        ),
+                ),
+              ],
+            )),
         Builder(
           builder: (context) => Form(
             key: _formKey,
@@ -173,7 +188,7 @@ class _MyAccountState extends State<MyAccount> {
                   SizedBox(
                     height: 16.0,
                   ),
-                   TextFormField(
+                  TextFormField(
                     enabled: !this._isLoading,
                     decoration: InputDecoration(
                       labelText: 'New Password',
@@ -225,7 +240,7 @@ class _MyAccountState extends State<MyAccount> {
                     : () {
                         final form = _formKey.currentState;
                         form.save();
-                        
+                        handleUpdate();
                       },
               ),
             ),
@@ -263,6 +278,35 @@ class _MyAccountState extends State<MyAccount> {
       this.addressController.text = result['address'];
       this.contactController.text = result['contact'].toString();
     });
+    print(result);
+  }
+
+  void handleUpdate() async {
+    setState(() {
+      this._isLoading = true;
+    });
+    Map<String, dynamic> result = await updateUser(this._user, this._token);
+    if (result['msg'] != null) {
+      setState(() {
+        this._message = result['msg'];
+        this._isLoading = false;
+      });
+    } else {
+      this.setState(() {
+        this._message = '';
+        this._smessage = "User updated successfully";
+        this._isLoading = false;
+        this._user = Agency(
+          licence: result['licence'],
+          name: result['name'],
+          address: result['address'],
+          contact: result['contact'],
+        );
+        this.nameController.text = result['name'];
+        this.addressController.text = result['address'];
+        this.contactController.text = result['contact'].toString();
+      });
+    }
     print(result);
   }
 }
