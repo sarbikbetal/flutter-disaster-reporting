@@ -129,7 +129,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                               ),
                               onPressed: () {
                                 storage.write(key: 'prompted', value: 'true');
-                                Navigator.pushReplacementNamed(
+                                Navigator.pushNamed(
                                     context, '/noauth');
                               }),
                         ],

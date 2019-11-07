@@ -18,6 +18,7 @@ class _PageWrapperState extends State<PageWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       body: PageView(
         controller: this._controller,
         children: <Widget>[Contributions(), Feed(), MyAccount()],
@@ -28,8 +29,9 @@ class _PageWrapperState extends State<PageWrapper> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 42.0),
         child: BottomNavyBar(
+          backgroundColor: Colors.grey[50],
           selectedIndex: this._pageIndex,
-          showElevation: true,
+          showElevation: false,
           onItemSelected: (index) => setState(() {
             this._pageIndex = index;
             _controller.animateToPage(

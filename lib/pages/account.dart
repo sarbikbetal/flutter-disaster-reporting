@@ -278,7 +278,6 @@ class _MyAccountState extends State<MyAccount> {
       this.addressController.text = result['address'];
       this.contactController.text = result['contact'].toString();
     });
-    print(result);
   }
 
   void handleUpdate() async {
