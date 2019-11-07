@@ -56,6 +56,26 @@ Future<Map<String, dynamic>> userSignup(Agency user) async {
     result = jsonDecode(response.body);
   } else
     result = {"msg": "Error registering user"};
-  ;
+  return result;
+}
+
+Future<Map<String, dynamic>> userInfo(Agency user, String token) async {
+  String route = url + 'info';
+  Map<String, String> headers = {"Authorization": "Bearer " + token};
+
+  Response response;
+  try {
+    response = await get(route, headers: headers);
+  } catch (e) {
+  }
+
+  Map<String, dynamic> result;
+  if (response == null) {
+    result = {"msg": "No internet connection."};
+  } else if (response.statusCode == 401 || response.statusCode == 400) {
+    result = {"msg": "Session expired, please login again."};
+  } else {
+    result = jsonDecode(response.body);
+  }
   return result;
 }
