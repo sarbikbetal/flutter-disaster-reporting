@@ -8,6 +8,7 @@ import 'package:disaster_reporting/auth/signup.dart';
 import 'package:disaster_reporting/onboarding.dart';
 import 'package:disaster_reporting/pages/mainPage.dart';
 import 'package:disaster_reporting/pages/unAuthFeed.dart';
+import 'package:disaster_reporting/pages/addRecord.dart';
 
 // Create storage
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -22,7 +23,6 @@ class Landing extends StatefulWidget {
 }
 
 class _LandingState extends State<Landing> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,8 +37,9 @@ class _LandingState extends State<Landing> {
         '/': (context) => OnBoardingActivity(),
         '/login': (context) => Login(),
         '/signup': (context) => SignUp(),
-        '/dashboard': (context) => PageWrapper(),
+        '/home': (context) => PageWrapper(),
         '/noauth': (context) => UnAuthFeed(),
+        '/add': (context) => AddRecord(),
       },
     );
   }

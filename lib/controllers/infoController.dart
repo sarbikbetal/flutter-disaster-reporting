@@ -42,6 +42,36 @@ Future<Map<String, dynamic>> getMyRecords(String token) async {
   } else {
     result = {"data": response.body};
   }
-  print(response.body);
+  return result;
+}
+
+Future<Map<String, dynamic>> addRecord(Info info, String token) async {
+  String route = url + 'newPost';
+  Map<String, String> headers = {
+    "Content-type": "application/json",
+    "Authorization": "Bearer " + token
+  };
+  Map<String, dynamic> userMap = {
+    'location': info.location,
+    'date': info.date,
+    'D_code': info.dname,
+    'weather': info.weather,
+    'situation': info.situation,
+    'worsen': info.worsen
+  };
+
+  String json = jsonEncode(userMap);
+  Response response = await post(route, headers: headers, body: json);
+
+  Map<String, dynamic> result;
+
+  if (response == null) {
+    result = {"msg": "No internet connection"};
+  } else if (response.statusCode == 200) {
+    result = jsonDecode(response.body);
+  } else if (response.statusCode == 400) {
+    result = {"err": "Session expired, please login again."};
+  } else
+    result = {"err": "Error adding record"};
   return result;
 }

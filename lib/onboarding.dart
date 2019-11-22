@@ -24,7 +24,6 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
         slivers: <Widget>[
           SliverAppBar(
               expandedHeight: 200.0,
-              leading: Icon(Icons.arrow_back),
               title: Text('Lifeline'),
               flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
@@ -36,7 +35,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                       height: 64.0,
                     ),
                     Text(
-                      'A modern way to let people get deeper insights about natural disasters happening all around.',
+                      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
                       style: TextStyle(fontSize: 20.0, color: Colors.grey[350]),
                     )
                   ],
@@ -129,7 +128,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                               ),
                               onPressed: () {
                                 storage.write(key: 'prompted', value: 'true');
-                                Navigator.pushNamed(
+                                Navigator.pushReplacementNamed(
                                     context, '/noauth');
                               }),
                         ],
@@ -150,9 +149,9 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
     if (prompt != null) {
       String key = await storage.read(key: 'auth_token');
       if (key == null)
-        await Navigator.pushNamed(context, '/noauth');
+        await Navigator.pushReplacementNamed(context, '/noauth');
       else
-        await Navigator.pushReplacementNamed(context, '/dashboard');
+        await Navigator.pushReplacementNamed(context, '/home');
     }
   }
 }

@@ -1,9 +1,97 @@
+import 'package:disaster_reporting/models/info.dart';
 import 'package:flutter/material.dart';
-import 'package:disaster_reporting/pages/feed.dart';
+import 'package:disaster_reporting/pages/partials/infoCard.dart';
+import 'package:disaster_reporting/controllers/infoController.dart';
+import 'dart:convert';
 
-class UnAuthFeed extends StatelessWidget {
+class UnAuthFeed extends StatefulWidget {
+  @override
+  _UnAuthFeedState createState() => _UnAuthFeedState();
+}
+
+class _UnAuthFeedState extends State<UnAuthFeed> {
+  bool _loading = true;
+  List _jsonList = List();
+
+  @override
+  void initState() {
+    super.initState();
+    getdata();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Feed());
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+              titleSpacing: 24.0,
+              pinned: true,
+              expandedHeight: 140.0,
+              flexibleSpace: ListView(
+                children: <Widget>[
+                  SizedBox(
+                    height: 60.0,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        MaterialButton(
+                          child: Text('Login'),
+                          onPressed: () {},
+                        ),
+                        Text(' or '),
+                        MaterialButton(
+                          child: Text('Register'),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              title: Text(
+                'Feed',
+                style: TextStyle(fontSize: 36.0),
+              ),
+              floating: true,
+              shape: BeveledRectangleBorder(
+                borderRadius:
+                    BorderRadius.only(bottomRight: Radius.circular(20.0)),
+              )),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              _loading
+                  ? <Widget>[
+                      SizedBox(
+                        height: 220.0,
+                      ),
+                      Center(child: CircularProgressIndicator())
+                    ]
+                  : _jsonList
+                      .map((data) => InfoCard(
+                            info: data,
+                          ))
+                      .toList(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  getdata() async {
+    Map<String, dynamic> results = await getAllRecords();
+
+    if (results['data'] != null) {
+      _jsonList = jsonDecode(results['data']) as List;
+      _jsonList = _jsonList.map((data) => Info.fromJson(data)).toList();
+    }
+
+    setState(() {
+      _loading = false;
+    });
   }
 }

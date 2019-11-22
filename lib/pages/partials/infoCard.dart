@@ -37,7 +37,7 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      widget.info.location,
+                      widget.info.dname,
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 20.0,
@@ -45,22 +45,19 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      widget.info.date,
+                      widget.info.location,
                       style: TextStyle(
-                        color: Colors.black45,
-                        height: 1.4,
+                        color: Colors.grey[700],
+                        height: 1.6,
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          'Situation: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, color: Colors.brown),
-                        ),
-                        Text(widget.info.situation)
-                      ],
+                    Text(
+                      widget.info.date,
+                      style: TextStyle(
+                        color: Colors.black45,
+                        height: 1.3,
+                      ),
                     ),
                     _expanded
                         ? Text(

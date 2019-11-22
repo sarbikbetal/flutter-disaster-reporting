@@ -160,7 +160,8 @@ class _LoginState extends State<Login> {
       });
       await storage.write(key: 'auth_token', value: result['auth_token']);
       await storage.write(key: 'prompted', value: 'true');
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {
         this._message = result['msg'];

@@ -249,7 +249,7 @@ class _MyAccountState extends State<MyAccount> {
         MaterialButton(
           child: Text('Logout'),
           onPressed: () {
-            Navigator.popAndPushNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/');
             storage.deleteAll();
           },
         ),
@@ -260,24 +260,26 @@ class _MyAccountState extends State<MyAccount> {
   void getInfo() async {
     this._token = await storage.read(key: 'auth_token');
     Map<String, dynamic> result = await userInfo(this._user, this._token);
-    if (result['msg'] != null) {
+    if (result['msg'] != null && mounted) {
       setState(() {
         this._message = result['msg'];
         this._isLoading = false;
       });
     }
-    this.setState(() {
-      this._isLoading = false;
-      this._user = Agency(
-        licence: result['licence'],
-        name: result['name'],
-        address: result['address'],
-        contact: result['contact'],
-      );
-      this.nameController.text = result['name'];
-      this.addressController.text = result['address'];
-      this.contactController.text = result['contact'].toString();
-    });
+    if (mounted) {
+      this.setState(() {
+        this._isLoading = false;
+        this._user = Agency(
+          licence: result['licence'],
+          name: result['name'],
+          address: result['address'],
+          contact: result['contact'],
+        );
+        this.nameController.text = result['name'];
+        this.addressController.text = result['address'];
+        this.contactController.text = result['contact'].toString();
+      });
+    }
   }
 
   void handleUpdate() async {
@@ -306,6 +308,5 @@ class _MyAccountState extends State<MyAccount> {
         this.contactController.text = result['contact'].toString();
       });
     }
-    print(result);
   }
 }

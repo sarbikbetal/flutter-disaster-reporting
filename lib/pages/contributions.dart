@@ -67,9 +67,10 @@ class _ContributionsState extends State<Contributions> {
       _jsonList = jsonDecode(results['data']) as List;
       _jsonList = _jsonList.map((data) => Info.fromJson(data)).toList();
     }
-
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 }

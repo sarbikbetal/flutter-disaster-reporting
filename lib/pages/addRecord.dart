@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:disaster_reporting/models/user.dart';
-import 'package:disaster_reporting/controllers/userController.dart';
+import 'package:disaster_reporting/models/info.dart';
+
+import 'package:disaster_reporting/controllers/infoController.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = new FlutterSecureStorage();
 
-class SignUp extends StatefulWidget {
+class AddRecord extends StatefulWidget {
   @override
-  _SignUpState createState() => _SignUpState();
+  _AddRecordState createState() => _AddRecordState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _AddRecordState extends State<AddRecord> {
   final _formKey = GlobalKey<FormState>();
   String _message = '';
-  Agency _user = Agency();
-  bool _invisiblePwd = true;
+  Info _info = Info();
   bool _isLoading = false;
+  DateTime _selectedDate = DateTime.now();
+  var dateController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    dateController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +40,7 @@ class _SignUpState extends State<SignUp> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Register',
+                    'Add',
                     style: TextStyle(fontSize: 72.0),
                   ),
                   IconButton(
@@ -81,10 +89,10 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.green,
                             ),
                           ),
-                          labelText: 'Name',
-                          prefixIcon: Icon(Icons.account_box),
+                          labelText: 'Location',
+                          prefixIcon: Icon(Icons.location_on),
                         ),
-                        onSaved: (val) => _user.name = val,
+                        onSaved: (val) => _info.location = val,
                       ),
                       SizedBox(
                         height: 16.0,
@@ -102,10 +110,34 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.green,
                             ),
                           ),
-                          labelText: 'Licence',
+                          labelText: 'Disaster',
+                          prefixIcon: Icon(Icons.flag),
+                        ),
+                        onSaved: (val) => _info.dname = val,
+                      ),
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      TextFormField(
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                        enabled: !this._isLoading,
+                        controller: dateController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.teal[100],
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.green,
+                            ),
+                          ),
+                          labelText: 'Date (YYYY.MM.DD)',
                           prefixIcon: Icon(Icons.credit_card),
                         ),
-                        onSaved: (val) => _user.licence = val,
+                        onSaved: (val) => _info.date = val,
                       ),
                       SizedBox(
                         height: 16.0,
@@ -123,20 +155,16 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.green,
                             ),
                           ),
-                          labelText: 'Address',
-                          prefixIcon: Icon(Icons.home),
+                          labelText: 'Weather',
+                          prefixIcon: Icon(Icons.wb_sunny),
                         ),
-                        onSaved: (val) => _user.address = val,
+                        onSaved: (val) => _info.weather = val,
                       ),
                       SizedBox(
                         height: 16.0,
                       ),
                       TextFormField(
                         enabled: !this._isLoading,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: <TextInputFormatter>[
-                          WhitelistingTextInputFormatter.digitsOnly,
-                        ],
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -148,10 +176,10 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.green,
                             ),
                           ),
-                          labelText: 'Contact',
-                          prefixIcon: Icon(Icons.phone),
+                          labelText: 'Situation',
+                          prefixIcon: Icon(Icons.landscape),
                         ),
-                        onSaved: (val) => _user.contact = int.parse(val),
+                        onSaved: (val) => _info.situation = val,
                       ),
                       SizedBox(
                         height: 16.0,
@@ -159,21 +187,6 @@ class _SignUpState extends State<SignUp> {
                       TextFormField(
                         enabled: !this._isLoading,
                         decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: Icon(
-                            Icons.vpn_key,
-                          ),
-                          suffixIcon: IconButton(
-                              color: Colors.black87,
-                              padding: EdgeInsets.all(1.0),
-                              icon: this._invisiblePwd
-                                  ? Icon(Icons.visibility)
-                                  : Icon(Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  this._invisiblePwd = !this._invisiblePwd;
-                                });
-                              }),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.teal[100],
@@ -184,9 +197,10 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.green,
                             ),
                           ),
+                          labelText: 'Condition',
+                          prefixIcon: Icon(Icons.landscape),
                         ),
-                        onSaved: (val) => setState(() => _user.psswd = val),
-                        obscureText: this._invisiblePwd,
+                        onSaved: (val) => _info.worsen = val,
                       ),
                       SizedBox(
                         height: 16.0,
@@ -203,13 +217,13 @@ class _SignUpState extends State<SignUp> {
                   padding:
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
                   child: MaterialButton(
-                    child: Text('Register'),
+                    child: Text('Add'),
                     onPressed: this._isLoading
                         ? null
                         : () {
                             final form = _formKey.currentState;
                             form.save();
-                            handleLogin();
+                            postRecord();
                           },
                   ),
                 ),
@@ -221,25 +235,37 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  handleLogin() async {
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        _selectedDate = picked;
+        dateController.text =
+            "${picked.year.toString()}.${picked.month.toString()}.${picked.day.toString()}";
+      });
+  }
+
+  postRecord() async {
     setState(() {
       this._isLoading = true;
     });
-    Map<String, dynamic> result = await userSignup(_user);
-    if (result['auth_token'] != null) {
-      setState(() {
-        this._message = "User registered successfully";
-        this._isLoading = false;
-      });
-      await storage.write(key: 'auth_token', value: result['auth_token']);
-      await storage.write(key: 'prompted', value: 'true');
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
+    String token = await storage.read(key: 'auth_token');
+    Map<String, dynamic> result = await addRecord(_info, token);
+    if (result['msg'] != null) {
       setState(() {
         this._message = result['msg'];
         this._isLoading = false;
       });
-      storage.deleteAll();
+      // Navigator.pop(context, '/dashboard');
+    } else {
+      setState(() {
+        this._message = result['err'];
+        this._isLoading = false;
+      });
     }
   }
 }

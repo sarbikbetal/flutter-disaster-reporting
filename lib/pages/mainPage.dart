@@ -14,6 +14,19 @@ class PageWrapper extends StatefulWidget {
 class _PageWrapperState extends State<PageWrapper> {
   int _pageIndex = 1;
   final _controller = PageController(initialPage: 1);
+  List<Widget> _fabs(context) => [
+        FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.pushNamed(context, '/add');
+          },
+        ),
+        FloatingActionButton(
+          child: Icon(Icons.search),
+          onPressed: () {},
+        ),
+        null
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +35,13 @@ class _PageWrapperState extends State<PageWrapper> {
       body: PageView(
         controller: this._controller,
         children: <Widget>[Contributions(), Feed(), MyAccount()],
-        onPageChanged: (index) => setState(() {
-          this._pageIndex = index;
-        }),
+        onPageChanged: (index) {
+          setState(() {
+            this._pageIndex = index;
+          });
+        },
       ),
+      floatingActionButton: _fabs(context)[_pageIndex],
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 42.0),
         child: BottomNavyBar(

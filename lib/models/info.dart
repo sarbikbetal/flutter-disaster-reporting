@@ -4,12 +4,12 @@ class Info {
   String weather;
   String situation;
   String worsen;
-  String dcode;
+  String dname;
 
   Info(
       {this.location,
       this.date,
-      this.dcode,
+      this.dname,
       this.situation,
       this.weather,
       this.worsen});
@@ -19,6 +19,6 @@ class Info {
         weather = json['weather'],
         date = json['date'],
         worsen = json['worsen'],
-        dcode = json['D_code'],
+        dname = json['D_code'],
         situation = json['situation'];
 }
