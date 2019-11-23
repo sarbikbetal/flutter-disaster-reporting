@@ -19,6 +19,7 @@ class _MyAccountState extends State<MyAccount> {
   String _token;
   bool _isLoading = true;
   bool _invisiblePwd = true;
+  bool _autoValidate = false;
 
   var nameController = TextEditingController();
   var addressController = TextEditingController();
@@ -65,20 +66,11 @@ class _MyAccountState extends State<MyAccount> {
                   TextFormField(
                     enabled: !this._isLoading,
                     controller: nameController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.teal[100],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
-                      labelText: 'Name',
-                      prefixIcon: Icon(Icons.account_box),
-                    ),
+                    decoration: decorate("Name", Icons.account_box, false),
+                    validator: (value) {
+                      return validate(value);
+                    },
+                    autovalidate: _autoValidate,
                     onSaved: (val) => _user.name = val,
                   ),
                   SizedBox(
@@ -87,20 +79,11 @@ class _MyAccountState extends State<MyAccount> {
                   TextFormField(
                     enabled: !this._isLoading,
                     controller: addressController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.teal[100],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
-                      labelText: 'Address',
-                      prefixIcon: Icon(Icons.home),
-                    ),
+                    decoration: decorate("Address", Icons.home, false),
+                    validator: (value) {
+                      return validate(value);
+                    },
+                    autovalidate: _autoValidate,
                     onSaved: (val) => _user.address = val,
                   ),
                   SizedBox(
@@ -113,20 +96,11 @@ class _MyAccountState extends State<MyAccount> {
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly,
                     ],
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.teal[100],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
-                      labelText: 'Contact',
-                      prefixIcon: Icon(Icons.phone),
-                    ),
+                    decoration: decorate("Contact", Icons.phone, false),
+                    validator: (value) {
+                      return validate(value);
+                    },
+                    autovalidate: _autoValidate,
                     onSaved: (val) => _user.contact = int.parse(val),
                   ),
                   SizedBox(
@@ -134,33 +108,11 @@ class _MyAccountState extends State<MyAccount> {
                   ),
                   TextFormField(
                     enabled: !this._isLoading,
-                    decoration: InputDecoration(
-                      labelText: 'Old Password',
-                      prefixIcon: Icon(
-                        Icons.vpn_key,
-                      ),
-                      suffixIcon: IconButton(
-                          color: Colors.black87,
-                          padding: EdgeInsets.all(1.0),
-                          icon: this._invisiblePwd
-                              ? Icon(Icons.visibility)
-                              : Icon(Icons.visibility_off),
-                          onPressed: () {
-                            setState(() {
-                              this._invisiblePwd = !this._invisiblePwd;
-                            });
-                          }),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.teal[100],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
+                    decoration: decorate("Old Password", Icons.vpn_key, true),
+                    validator: (value) {
+                      return validate(value);
+                    },
+                    autovalidate: _autoValidate,
                     onSaved: (val) => setState(() => _user.old = val),
                     obscureText: this._invisiblePwd,
                   ),
@@ -169,33 +121,11 @@ class _MyAccountState extends State<MyAccount> {
                   ),
                   TextFormField(
                     enabled: !this._isLoading,
-                    decoration: InputDecoration(
-                      labelText: 'New Password',
-                      prefixIcon: Icon(
-                        Icons.vpn_key,
-                      ),
-                      suffixIcon: IconButton(
-                          color: Colors.black87,
-                          padding: EdgeInsets.all(1.0),
-                          icon: this._invisiblePwd
-                              ? Icon(Icons.visibility)
-                              : Icon(Icons.visibility_off),
-                          onPressed: () {
-                            setState(() {
-                              this._invisiblePwd = !this._invisiblePwd;
-                            });
-                          }),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.teal[100],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
+                    decoration: decorate("New Password", Icons.vpn_key, true),
+                    validator: (value) {
+                      return validate(value);
+                    },
+                    autovalidate: _autoValidate,
                     onSaved: (val) => setState(() => _user.psswd = val),
                     obscureText: this._invisiblePwd,
                   ),
@@ -217,8 +147,6 @@ class _MyAccountState extends State<MyAccount> {
                 onPressed: this._isLoading
                     ? null
                     : () {
-                        final form = _formKey.currentState;
-                        form.save();
                         handleUpdate();
                       },
               ),
@@ -267,39 +195,102 @@ class _MyAccountState extends State<MyAccount> {
   }
 
   void handleUpdate() async {
-    setState(() {
-      this._isLoading = true;
-    });
+    String mssg;
+    Color color;
 
-    Map<String, dynamic> result = await updateUser(this._user, this._token);
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
 
-    if (result['err'] != null) {
       setState(() {
-        this._isLoading = false;
+        this._isLoading = true;
       });
-      final SnackBar snackBar = msgBar(
-        result['err'],
-        Colors.red[400],
-      );
-      Scaffold.of(context).showSnackBar(snackBar);
+
+      Map<String, dynamic> result = await updateUser(this._user, this._token);
+
+      if (result['err'] != null) {
+        setState(() {
+          this._isLoading = false;
+        });
+        mssg = result['err'];
+        color = Colors.red[400];
+      } else {
+        this.setState(() {
+          this._isLoading = false;
+          this._user = Agency(
+            licence: result['licence'],
+            name: result['name'],
+            address: result['address'],
+            contact: result['contact'],
+          );
+          this.nameController.text = result['name'];
+          this.addressController.text = result['address'];
+          this.contactController.text = result['contact'].toString();
+        });
+        mssg = "User updated successfully";
+        color = Colors.green[400];
+      }
     } else {
-      this.setState(() {
-        this._isLoading = false;
-        this._user = Agency(
-          licence: result['licence'],
-          name: result['name'],
-          address: result['address'],
-          contact: result['contact'],
-        );
-        this.nameController.text = result['name'];
-        this.addressController.text = result['address'];
-        this.contactController.text = result['contact'].toString();
-      });
-      final SnackBar snackBar = msgBar(
-        "User updated successfully",
-        Colors.green[400],
-      );
-      Scaffold.of(context).showSnackBar(snackBar);
+      mssg = "Please fill up all the details";
+      color = Colors.red[400];
     }
+
+    final SnackBar snackBar = msgBar(
+      mssg,
+      color,
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  String validate(value) {
+    this._autoValidate = true;
+    if (value.isEmpty) {
+      return 'Please fill this field';
+    }
+    return null;
+  }
+
+  InputDecoration decorate(String text, IconData icon, bool password) {
+    return InputDecoration(
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.teal[100],
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.green,
+        ),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.red,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.deepOrange[200],
+        ),
+      ),
+      labelText: text,
+      prefixIcon: Icon(icon),
+      suffixIcon: password
+          ? IconButton(
+              color: Colors.black54,
+              padding: EdgeInsets.all(1.0),
+              icon: this._invisiblePwd
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  this._invisiblePwd = !this._invisiblePwd;
+                });
+              })
+          : null,
+    );
   }
 }

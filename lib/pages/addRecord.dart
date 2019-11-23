@@ -17,7 +17,6 @@ class _AddRecordState extends State<AddRecord> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _autoValidate = false;
-  String _message = '';
   Info _info = Info();
   bool _isLoading = false;
   DateTime _selectedDate = DateTime.now();
@@ -60,16 +59,9 @@ class _AddRecordState extends State<AddRecord> {
             Padding(
               padding: EdgeInsets.all(32.0),
               child: Center(
-                child: _isLoading
-                    ? LinearProgressIndicator()
-                    : Text(
-                        this._message,
-                        style: TextStyle(
-                          color: Colors.red[400],
-                          fontSize: 16.0,
-                        ),
-                      ),
-              ),
+                  child: _isLoading
+                      ? LinearProgressIndicator()
+                      : SizedBox(height: 6.0)),
             ),
             Builder(
               builder: (context) => Form(
@@ -81,20 +73,7 @@ class _AddRecordState extends State<AddRecord> {
                     children: <Widget>[
                       TextFormField(
                         enabled: !this._isLoading,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Location',
-                          prefixIcon: Icon(Icons.location_on),
-                        ),
+                        decoration: decorate('Location', Icons.location_on),
                         validator: (value) {
                           return validate(value);
                         },
@@ -106,20 +85,7 @@ class _AddRecordState extends State<AddRecord> {
                       ),
                       TextFormField(
                         enabled: !this._isLoading,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Disaster',
-                          prefixIcon: Icon(Icons.flag),
-                        ),
+                        decoration: decorate('Disaster', Icons.flag),
                         validator: (value) {
                           return validate(value);
                         },
@@ -134,20 +100,8 @@ class _AddRecordState extends State<AddRecord> {
                         onTap: () => _selectDate(context),
                         enabled: !this._isLoading,
                         controller: dateController,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Date (YYYY.MM.DD)',
-                          prefixIcon: Icon(Icons.credit_card),
-                        ),
+                        decoration:
+                            decorate('Date (YYYY.MM.DD)', Icons.date_range),
                         validator: (value) {
                           return validate(value);
                         },
@@ -159,20 +113,7 @@ class _AddRecordState extends State<AddRecord> {
                       ),
                       TextFormField(
                         enabled: !this._isLoading,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Weather',
-                          prefixIcon: Icon(Icons.wb_sunny),
-                        ),
+                        decoration: decorate('Weather', Icons.wb_sunny),
                         validator: (value) {
                           return validate(value);
                         },
@@ -184,20 +125,7 @@ class _AddRecordState extends State<AddRecord> {
                       ),
                       TextFormField(
                         enabled: !this._isLoading,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Situation',
-                          prefixIcon: Icon(Icons.landscape),
-                        ),
+                        decoration: decorate('Situation', Icons.landscape),
                         validator: (value) {
                           return validate(value);
                         },
@@ -209,20 +137,7 @@ class _AddRecordState extends State<AddRecord> {
                       ),
                       TextFormField(
                         enabled: !this._isLoading,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal[100],
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          labelText: 'Condition',
-                          prefixIcon: Icon(Icons.landscape),
-                        ),
+                        decoration: decorate('Condition', Icons.landscape),
                         validator: (value) {
                           return validate(value);
                         },
@@ -318,5 +233,37 @@ class _AddRecordState extends State<AddRecord> {
       return 'Please fill this field';
     }
     return null;
+  }
+
+  InputDecoration decorate(String text, IconData icon) {
+    return InputDecoration(
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.teal[100],
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.green,
+        ),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.red,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.deepOrange[200],
+        ),
+      ),
+      labelText: text,
+      prefixIcon: Icon(icon),
+    );
   }
 }
