@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:disaster_reporting/models/user.dart';
 import 'package:disaster_reporting/controllers/userController.dart';
-import 'package:flutter/services.dart';
+import 'package:disaster_reporting/pages/partials/msgBar.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -18,8 +19,6 @@ class _MyAccountState extends State<MyAccount> {
   String _token;
   bool _isLoading = true;
   bool _invisiblePwd = true;
-  String _message = '';
-  String _smessage = '';
 
   var nameController = TextEditingController();
   var addressController = TextEditingController();
@@ -44,33 +43,13 @@ class _MyAccountState extends State<MyAccount> {
     return ListView(
       children: <Widget>[
         Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Column(
-              children: <Widget>[
-                Center(
-                  child: _isLoading
-                      ? LinearProgressIndicator()
-                      : Text(
-                          this._message,
-                          style: TextStyle(
-                            color: Colors.red[400],
-                            fontSize: 16.0,
-                          ),
-                        ),
+          padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+          child: _isLoading
+              ? LinearProgressIndicator()
+              : SizedBox(
+                  height: 6.0,
                 ),
-                Center(
-                  child: _isLoading
-                      ? Text('')
-                      : Text(
-                          this._smessage,
-                          style: TextStyle(
-                            color: Colors.green[400],
-                            fontSize: 16.0,
-                          ),
-                        ),
-                ),
-              ],
-            )),
+        ),
         Builder(
           builder: (context) => Form(
             key: _formKey,
@@ -260,11 +239,16 @@ class _MyAccountState extends State<MyAccount> {
   void getInfo() async {
     this._token = await storage.read(key: 'auth_token');
     Map<String, dynamic> result = await userInfo(this._user, this._token);
-    if (result['msg'] != null && mounted) {
+    if (result['err'] != null && mounted) {
       setState(() {
-        this._message = result['msg'];
         this._isLoading = false;
       });
+      final SnackBar snackBar = msgBar(
+        result['err'],
+        Colors.red[400],
+      );
+
+      Scaffold.of(context).showSnackBar(snackBar);
     }
     if (mounted) {
       this.setState(() {
@@ -286,16 +270,20 @@ class _MyAccountState extends State<MyAccount> {
     setState(() {
       this._isLoading = true;
     });
+
     Map<String, dynamic> result = await updateUser(this._user, this._token);
-    if (result['msg'] != null) {
+
+    if (result['err'] != null) {
       setState(() {
-        this._message = result['msg'];
         this._isLoading = false;
       });
+      final SnackBar snackBar = msgBar(
+        result['err'],
+        Colors.red[400],
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
     } else {
       this.setState(() {
-        this._message = '';
-        this._smessage = "User updated successfully";
         this._isLoading = false;
         this._user = Agency(
           licence: result['licence'],
@@ -307,6 +295,11 @@ class _MyAccountState extends State<MyAccount> {
         this.addressController.text = result['address'];
         this.contactController.text = result['contact'].toString();
       });
+      final SnackBar snackBar = msgBar(
+        "User updated successfully",
+        Colors.green[400],
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
     }
   }
 }

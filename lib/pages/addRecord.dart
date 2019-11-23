@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:disaster_reporting/models/info.dart';
-
 import 'package:disaster_reporting/controllers/infoController.dart';
-import 'package:flutter/services.dart';
+import 'package:disaster_reporting/pages/partials/msgBar.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -15,6 +14,9 @@ class AddRecord extends StatefulWidget {
 
 class _AddRecordState extends State<AddRecord> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _autoValidate = false;
   String _message = '';
   Info _info = Info();
   bool _isLoading = false;
@@ -30,6 +32,7 @@ class _AddRecordState extends State<AddRecord> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -92,6 +95,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Location',
                           prefixIcon: Icon(Icons.location_on),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.location = val,
                       ),
                       SizedBox(
@@ -113,6 +120,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Disaster',
                           prefixIcon: Icon(Icons.flag),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.dname = val,
                       ),
                       SizedBox(
@@ -137,6 +148,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Date (YYYY.MM.DD)',
                           prefixIcon: Icon(Icons.credit_card),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.date = val,
                       ),
                       SizedBox(
@@ -158,6 +173,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Weather',
                           prefixIcon: Icon(Icons.wb_sunny),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.weather = val,
                       ),
                       SizedBox(
@@ -179,6 +198,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Situation',
                           prefixIcon: Icon(Icons.landscape),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.situation = val,
                       ),
                       SizedBox(
@@ -200,6 +223,10 @@ class _AddRecordState extends State<AddRecord> {
                           labelText: 'Condition',
                           prefixIcon: Icon(Icons.landscape),
                         ),
+                        validator: (value) {
+                          return validate(value);
+                        },
+                        autovalidate: _autoValidate,
                         onSaved: (val) => _info.worsen = val,
                       ),
                       SizedBox(
@@ -221,8 +248,6 @@ class _AddRecordState extends State<AddRecord> {
                     onPressed: this._isLoading
                         ? null
                         : () {
-                            final form = _formKey.currentState;
-                            form.save();
                             postRecord();
                           },
                   ),
@@ -250,22 +275,48 @@ class _AddRecordState extends State<AddRecord> {
   }
 
   postRecord() async {
-    setState(() {
-      this._isLoading = true;
-    });
-    String token = await storage.read(key: 'auth_token');
-    Map<String, dynamic> result = await addRecord(_info, token);
-    if (result['msg'] != null) {
+    String mssg;
+    Color color;
+
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
       setState(() {
-        this._message = result['msg'];
-        this._isLoading = false;
+        this._isLoading = true;
       });
-      // Navigator.pop(context, '/dashboard');
+      String token = await storage.read(key: 'auth_token');
+
+      Map<String, dynamic> result = await addRecord(_info, token);
+
+      if (result['msg'] != null) {
+        setState(() {
+          this._isLoading = false;
+        });
+        mssg = result['msg'];
+        color = Colors.green[400];
+      } else {
+        setState(() {
+          this._isLoading = false;
+        });
+        mssg = result['err'];
+        color = Colors.red[400];
+      }
     } else {
-      setState(() {
-        this._message = result['err'];
-        this._isLoading = false;
-      });
+      mssg = "Please fill up all the details";
+      color = Colors.red[400];
     }
+    final SnackBar snackBar = msgBar(
+      mssg,
+      color,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  String validate(value) {
+    this._autoValidate = true;
+    if (value.isEmpty) {
+      return 'Please fill this field';
+    }
+    return null;
   }
 }

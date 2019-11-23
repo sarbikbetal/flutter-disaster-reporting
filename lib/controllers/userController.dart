@@ -26,11 +26,11 @@ Future<Map<String, dynamic>> userSignin(Agency user) async {
 
   Map<String, dynamic> result;
   if (response == null) {
-    result = {"msg": "No internet connection"};
+    result = {"err": "No internet connection"};
   } else if (response.statusCode == 200) {
     result = jsonDecode(response.body);
   } else
-    result = {"msg": "Invalid username/password"};
+    result = {"err": "Invalid username/password"};
   return result;
 }
 
@@ -51,11 +51,11 @@ Future<Map<String, dynamic>> userSignup(Agency user) async {
   Map<String, dynamic> result;
 
   if (response == null) {
-    result = {"msg": "No internet connection"};
+    result = {"err": "No internet connection"};
   } else if (response.statusCode == 200) {
     result = jsonDecode(response.body);
   } else
-    result = {"msg": "Error registering user"};
+    result = {"err": "Error registering user"};
   return result;
 }
 
@@ -105,14 +105,13 @@ Future<Map<String, dynamic>> updateUser(Agency user, String token) async {
 
   Map<String, dynamic> result;
   if (response == null) {
-    result = {"msg": "No internet connection."};
+    result = {"err": "No internet connection."};
   } else if (response.statusCode == 401) {
-    result = {"msg": "Session expired, please login again."};
+    result = {"err": "Session expired, please login again."};
   } else if (response.statusCode == 400) {
-    result = {"msg": "Please fill in all details"};
+    result = {"err": "Please fill in all details"};
   } else {
     result = jsonDecode(response.body);
   }
-  print(result);
   return result;
 }

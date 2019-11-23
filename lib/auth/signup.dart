@@ -209,7 +209,7 @@ class _SignUpState extends State<SignUp> {
                         : () {
                             final form = _formKey.currentState;
                             form.save();
-                            handleLogin();
+                            handleSignup();
                           },
                   ),
                 ),
@@ -221,7 +221,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  handleLogin() async {
+  handleSignup() async {
     setState(() {
       this._isLoading = true;
     });
@@ -236,7 +236,7 @@ class _SignUpState extends State<SignUp> {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {
-        this._message = result['msg'];
+        this._message = result['err'];
         this._isLoading = false;
       });
       storage.deleteAll();
