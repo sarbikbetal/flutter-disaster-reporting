@@ -9,8 +9,6 @@ class OnBoardingActivity extends StatefulWidget {
 }
 
 class _OnBoardingActivityState extends State<OnBoardingActivity> {
-  String _token;
-
   @override
   void initState() {
     super.initState();
@@ -20,103 +18,59 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-              expandedHeight: 200.0,
-              title: Text('Lifeline'),
-              flexibleSpace: FlexibleSpaceBar(
-                  background: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 64.0,
-                    ),
-                    Text(
-                      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
-                      style: TextStyle(fontSize: 20.0, color: Colors.grey[350]),
-                    )
-                  ],
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          image: DecorationImage(
+              image: AssetImage("assets/images/onboarding.jpg"),
+              alignment: Alignment(0.0, -0.8),
+              fit: BoxFit.scaleDown),
+        ),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 260.0, 24.0, 24.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(16.0),
+                  ),
                 ),
-              )),
-              floating: true,
-              snap: true,
-              shape: BeveledRectangleBorder(
-                borderRadius:
-                    BorderRadius.only(bottomRight: Radius.circular(20.0)),
-              )),
-          SliverList(
-            delegate: SliverChildListDelegate(<Widget>[
-              SizedBox(
-                height: 220.0,
-                child: Center(
-                  child: Text((this._token != null) ? this._token : ''),
-                ),
-              ),
-              Container(
+                elevation: 5.0,
                 child: Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.fromLTRB(24.0, 36.0, 24.0, 20.0),
                   child: Column(
                     children: <Widget>[
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          OutlineButton(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                " Login ",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 22.0,
-                                ),
-                              ),
-                            ),
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/login'),
-                            color: Colors.teal,
-                            splashColor: Colors.green[400],
-                            highlightedBorderColor: Colors.green[400],
-                            borderSide: BorderSide(
-                              color: Colors.teal[300],
-                              width: 2.0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.0)),
-                            ),
-                          ),
-                          OutlineButton(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Register",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 22.0,
-                                ),
-                              ),
-                            ),
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/signup'),
-                            color: Colors.teal,
-                            splashColor: Colors.green[400],
-                            highlightedBorderColor: Colors.green[400],
-                            borderSide: BorderSide(
-                              color: Colors.teal[300],
-                              width: 2.0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.0)),
+                          Text(
+                            "Let's get started...",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 28.0,
                             ),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 8.0,
+                        height: 12.0,
+                      ),
+                      Text(
+                        'Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      SizedBox(
+                        height: 28.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          coolBtn("Login", "/login"),
+                          coolBtn("Register", "/signup")
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.0,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +78,9 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                           FlatButton(
                               child: Text(
                                 "Skip",
-                                style: TextStyle(color: Colors.black54),
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.greenAccent[700]),
                               ),
                               onPressed: () {
                                 storage.write(key: 'prompted', value: 'true');
@@ -136,10 +92,10 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                     ],
                   ),
                 ),
-              )
-            ]),
-          )
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -153,5 +109,36 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
       else
         await Navigator.pushReplacementNamed(context, '/home');
     }
+  }
+
+  Widget coolBtn(String text, String path) {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.greenAccent[100],
+            offset: Offset(0.0, 6.0),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+      child: FlatButton(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 22.0,
+            ),
+          ),
+        ),
+        color: Colors.greenAccent,
+        onPressed: () => Navigator.pushNamed(context, path),
+        splashColor: Colors.greenAccent[100],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+      ),
+    );
   }
 }

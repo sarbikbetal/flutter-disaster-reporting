@@ -29,8 +29,8 @@ class _LandingState extends State<Landing> {
       theme: ThemeData(
         primarySwatch: Colors.green,
         buttonTheme: ButtonThemeData(
-          textTheme: ButtonTextTheme.primary,
-          buttonColor: Colors.red,
+          minWidth: 140.0,
+          buttonColor: Colors.greenAccent,
         ),
       ),
       routes: {

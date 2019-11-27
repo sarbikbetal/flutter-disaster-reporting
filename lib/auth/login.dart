@@ -23,86 +23,114 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (BuildContext context) {
-        return SafeArea(
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/images/login_bg.png"),
+                alignment: Alignment(0.0, -0.9),
+                fit: BoxFit.scaleDown),
+          ),
           child: ListView(
             children: <Widget>[
+              Center(
+                  child: _isLoading
+                      ? LinearProgressIndicator()
+                      : SizedBox(height: 6.0)),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Login',
-                      style: TextStyle(fontSize: 72.0),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        size: 48.0,
-                        color: Colors.red[400],
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Center(
-                    child: _isLoading
-                        ? LinearProgressIndicator()
-                        : SizedBox(height: 6.0)),
-              ),
-              Builder(
-                builder: (context) => Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          enabled: !this._isLoading,
-                          decoration:
-                              decorate("License", Icons.credit_card, false),
-                          validator: (value) {
-                            return validate(value);
-                          },
-                          autovalidate: _autoValidate,
-                          onSaved: (val) => _user.licence = val,
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
-                          enabled: !this._isLoading,
-                          decoration: decorate("Password", Icons.vpn_key, true),
-                          validator: (value) {
-                            return validate(value);
-                          },
-                          autovalidate: _autoValidate,
-                          onSaved: (val) => setState(() => _user.psswd = val),
-                          obscureText: this._invisiblePwd,
-                        ),
-                      ],
-                    ),
+                padding: EdgeInsets.fromLTRB(24.0, 160.0, 24.0, 0.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  elevation: 5.0,
+                  child: Builder(
+                    builder: (context) => Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 24.0, horizontal: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    iconSize: 36.0,
+                                    icon: Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Colors.black54,
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  Text(
+                                    ' Login',
+                                    style: TextStyle(fontSize: 36.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 16.0),
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 28.0,
+                                  ),
+                                  TextFormField(
+                                    enabled: !this._isLoading,
+                                    decoration: decorate(
+                                        "Licence", Icons.credit_card, false),
+                                    validator: (value) {
+                                      return validate(value);
+                                    },
+                                    autovalidate: _autoValidate,
+                                    onSaved: (val) => _user.licence = val,
+                                  ),
+                                  SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  TextFormField(
+                                    enabled: !this._isLoading,
+                                    decoration: decorate(
+                                        "Password", Icons.vpn_key, true),
+                                    validator: (value) {
+                                      return validate(value);
+                                    },
+                                    autovalidate: _autoValidate,
+                                    onSaved: (val) =>
+                                        setState(() => _user.psswd = val),
+                                    obscureText: this._invisiblePwd,
+                                  ),
+                                  SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      MaterialButton(
+                                        child: Text(
+                                          'Login',
+                                          style: TextStyle(
+                                            fontSize: 22.0,
+                                          ),
+                                        ),
+                                        onPressed: this._isLoading
+                                            ? null
+                                            : () {
+                                                handleLogin(context);
+                                              },
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
                   ),
                 ),
-              ),
-              Row(
-                children: <Widget>[
-                  Center(
-                    child: MaterialButton(
-                      child: Text('Login'),
-                      onPressed: this._isLoading
-                          ? null
-                          : () {
-                              handleLogin(context);
-                            },
-                    ),
-                  )
-                ],
               )
             ],
           ),

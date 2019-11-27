@@ -40,7 +40,9 @@ class _UnAuthFeedState extends State<UnAuthFeed> {
                       children: <Widget>[
                         MaterialButton(
                           child: Text('Login'),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
                         ),
                         Text(' or '),
                         MaterialButton(
