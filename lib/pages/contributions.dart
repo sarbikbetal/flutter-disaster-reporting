@@ -27,18 +27,22 @@ class _ContributionsState extends State<Contributions> {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
-            titleSpacing: 24.0,
-            pinned: true,
-            expandedHeight: 140.0,
-            title: Text(
-              'Records',
-              style: TextStyle(fontSize: 36.0),
+          backgroundColor: Colors.white,
+          titleSpacing: 24.0,
+          pinned: true,
+          expandedHeight: 200.0,
+          title: Text(
+            'Additions',
+            style: TextStyle(fontSize: 34.0, color: Colors.green[600]),
+          ),
+          floating: true,
+          flexibleSpace: FlexibleSpaceBar(
+            background: Image.asset(
+              'assets/images/contri.jpg',
+              fit: BoxFit.cover,
             ),
-            floating: true,
-            shape: BeveledRectangleBorder(
-              borderRadius:
-                  BorderRadius.only(bottomRight: Radius.circular(20.0)),
-            )),
+          ),
+        ),
         SliverList(
           delegate: SliverChildListDelegate(
             _loading
@@ -48,11 +52,32 @@ class _ContributionsState extends State<Contributions> {
                     ),
                     Center(child: CircularProgressIndicator())
                   ]
-                : _jsonList
-                    .map((data) => InfoCard(
-                          info: data,
-                        ))
-                    .toList(),
+                : _jsonList.isEmpty
+                    ? [
+                        SizedBox(
+                          height: 64.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            "You have not made any contributions yet..",
+                            style: TextStyle(
+                                fontSize: 22.0, color: Colors.black54),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Center(
+                          child: Image.asset(
+                            'assets/images/nocontrib.jpg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                        )
+                      ]
+                    : _jsonList
+                        .map((data) => InfoCard(
+                              info: data,
+                            ))
+                        .toList(),
           ),
         )
       ],
@@ -61,6 +86,7 @@ class _ContributionsState extends State<Contributions> {
 
   getdata() async {
     String token = await storage.read(key: 'auth_token');
+    _jsonList = null;
     Map<String, dynamic> results = await getMyRecords(token);
 
     if (results['data'] != null) {

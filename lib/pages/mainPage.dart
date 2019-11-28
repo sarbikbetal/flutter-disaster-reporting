@@ -21,25 +21,24 @@ class _PageWrapperState extends State<PageWrapper> {
             Navigator.pushNamed(context, '/add');
           },
         ),
-        FloatingActionButton(
-          child: Icon(Icons.search),
-          onPressed: () {},
-        ),
-        null
+        null,
+        null,
       ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: PageView(
-        controller: this._controller,
-        children: <Widget>[Contributions(), Feed(), MyAccount()],
-        onPageChanged: (index) {
-          setState(() {
-            this._pageIndex = index;
-          });
-        },
+      body: SafeArea(
+        child: PageView(
+          controller: this._controller,
+          children: <Widget>[Contributions(), Feed(), MyAccount()],
+          onPageChanged: (index) {
+            setState(() {
+              this._pageIndex = index;
+            });
+          },
+        ),
       ),
       floatingActionButton: _fabs(context)[_pageIndex],
       bottomNavigationBar: Padding(
@@ -65,7 +64,7 @@ class _PageWrapperState extends State<PageWrapper> {
             BottomNavyBarItem(
               icon: Icon(Icons.home),
               title: Text('Home'),
-              activeColor: Colors.indigo,
+              activeColor: Colors.cyan,
             ),
             BottomNavyBarItem(
               icon: Icon(Icons.account_circle),

@@ -24,18 +24,22 @@ class _FeedState extends State<Feed> {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
-            titleSpacing: 24.0,
-            pinned: true,
-            expandedHeight: 140.0,
-            title: Text(
-              'Feed',
-              style: TextStyle(fontSize: 36.0),
+          backgroundColor: Colors.white,
+          titleSpacing: 24.0,
+          pinned: true,
+          expandedHeight: 200.0,
+          title: Text(
+            'Feed',
+            style: TextStyle(fontSize: 36.0, color: Colors.cyan[600]),
+          ),
+          floating: true,
+          flexibleSpace: FlexibleSpaceBar(
+            background: Image.asset(
+              'assets/images/feed.jpg',
+              fit: BoxFit.cover,
             ),
-            floating: true,
-            shape: BeveledRectangleBorder(
-              borderRadius:
-                  BorderRadius.only(bottomRight: Radius.circular(20.0)),
-            )),
+          ),
+        ),
         SliverList(
           delegate: SliverChildListDelegate(
             _loading

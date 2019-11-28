@@ -32,143 +32,164 @@ class _AddRecordState extends State<AddRecord> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/addRec.jpg"),
+              alignment: Alignment(0.0, -0.9),
+              fit: BoxFit.scaleDown),
+        ),
         child: ListView(
           children: <Widget>[
+            Center(
+                child: _isLoading
+                    ? LinearProgressIndicator()
+                    : SizedBox(height: 6.0)),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Add',
-                    style: TextStyle(fontSize: 72.0),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      size: 48.0,
-                      color: Colors.red[400],
+              padding: EdgeInsets.fromLTRB(24.0, 160.0, 24.0, 0.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                ),
+                elevation: 5.0,
+                child: Builder(
+                  builder: (context) => Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 24.0, horizontal: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              IconButton(
+                                padding: EdgeInsets.all(0.0),
+                                iconSize: 36.0,
+                                icon: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.black54,
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              Text(
+                                ' Add record',
+                                style: TextStyle(fontSize: 36.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 16.0),
+                          child: Column(
+                            children: <Widget>[
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration:
+                                    decorate('Location', Icons.location_on),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.location = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration: decorate('Disaster', Icons.flag),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.dname = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                readOnly: true,
+                                onTap: () => _selectDate(context),
+                                enabled: !this._isLoading,
+                                controller: dateController,
+                                decoration: decorate(
+                                    'Date (YYYY.MM.DD)', Icons.date_range),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.date = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration: decorate('Weather', Icons.wb_sunny),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.weather = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration:
+                                    decorate('Situation', Icons.landscape),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.situation = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration:
+                                    decorate('Condition', Icons.landscape),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _info.worsen = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  MaterialButton(
+                                    child: Text(
+                                      'Post',
+                                      style: TextStyle(
+                                        fontSize: 22.0,
+                                      ),
+                                    ),
+                                    onPressed: this._isLoading
+                                        ? null
+                                        : () {
+                                            postRecord();
+                                          },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Center(
-                  child: _isLoading
-                      ? LinearProgressIndicator()
-                      : SizedBox(height: 6.0)),
-            ),
-            Builder(
-              builder: (context) => Form(
-                key: _formKey,
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        enabled: !this._isLoading,
-                        decoration: decorate('Location', Icons.location_on),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.location = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        enabled: !this._isLoading,
-                        decoration: decorate('Disaster', Icons.flag),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.dname = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        readOnly: true,
-                        onTap: () => _selectDate(context),
-                        enabled: !this._isLoading,
-                        controller: dateController,
-                        decoration:
-                            decorate('Date (YYYY.MM.DD)', Icons.date_range),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.date = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        enabled: !this._isLoading,
-                        decoration: decorate('Weather', Icons.wb_sunny),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.weather = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        enabled: !this._isLoading,
-                        decoration: decorate('Situation', Icons.landscape),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.situation = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        enabled: !this._isLoading,
-                        decoration: decorate('Condition', Icons.landscape),
-                        validator: (value) {
-                          return validate(value);
-                        },
-                        autovalidate: _autoValidate,
-                        onSaved: (val) => _info.worsen = val,
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                    ],
                   ),
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                  child: MaterialButton(
-                    child: Text('Add'),
-                    onPressed: this._isLoading
-                        ? null
-                        : () {
-                            postRecord();
-                          },
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),

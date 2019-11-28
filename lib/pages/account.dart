@@ -41,126 +41,162 @@ class _MyAccountState extends State<MyAccount> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: _isLoading
-              ? LinearProgressIndicator()
-              : SizedBox(
-                  height: 6.0,
-                ),
-        ),
-        Builder(
-          builder: (context) => Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    _user != null ? "Licence: " + _user.licence : " ",
-                    style: TextStyle(fontSize: 22.0),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    enabled: !this._isLoading,
-                    controller: nameController,
-                    decoration: decorate("Name", Icons.account_box, false),
-                    validator: (value) {
-                      return validate(value);
-                    },
-                    autovalidate: _autoValidate,
-                    onSaved: (val) => _user.name = val,
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  TextFormField(
-                    enabled: !this._isLoading,
-                    controller: addressController,
-                    decoration: decorate("Address", Icons.home, false),
-                    validator: (value) {
-                      return validate(value);
-                    },
-                    autovalidate: _autoValidate,
-                    onSaved: (val) => _user.address = val,
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  TextFormField(
-                    enabled: !this._isLoading,
-                    controller: contactController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: <TextInputFormatter>[
-                      WhitelistingTextInputFormatter.digitsOnly,
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage("assets/images/account.jpg"),
+            alignment: Alignment(0.0, -1.0),
+            fit: BoxFit.scaleDown),
+      ),
+      child: ListView(
+        children: <Widget>[
+          Center(
+            child:
+                _isLoading ? LinearProgressIndicator() : SizedBox(height: 6.0),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(24.0, 160.0, 24.0, 0.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              elevation: 5.0,
+              child: Builder(
+                builder: (context) => Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 24.0, vertical: 4.0),
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 16.0),
+                            Text(
+                              _user != null
+                                  ? "Licence: " + _user.licence
+                                  : "Licence:",
+                              style: TextStyle(fontSize: 22.0),
+                            ),
+                            SizedBox(height: 16.0),
+                            TextFormField(
+                              enabled: !this._isLoading,
+                              controller: nameController,
+                              decoration:
+                                  decorate("Name", Icons.account_box, false),
+                              validator: (value) {
+                                return validate(value);
+                              },
+                              autovalidate: _autoValidate,
+                              onSaved: (val) => _user.name = val,
+                            ),
+                            SizedBox(
+                              height: 16.0,
+                            ),
+                            TextFormField(
+                              enabled: !this._isLoading,
+                              controller: addressController,
+                              decoration:
+                                  decorate("Address", Icons.home, false),
+                              validator: (value) {
+                                return validate(value);
+                              },
+                              autovalidate: _autoValidate,
+                              onSaved: (val) => _user.address = val,
+                            ),
+                            SizedBox(
+                              height: 16.0,
+                            ),
+                            TextFormField(
+                              enabled: !this._isLoading,
+                              controller: contactController,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter.digitsOnly,
+                              ],
+                              decoration:
+                                  decorate("Contact", Icons.phone, false),
+                              validator: (value) {
+                                return validate(value);
+                              },
+                              autovalidate: _autoValidate,
+                              onSaved: (val) => _user.contact = int.parse(val),
+                            ),
+                            SizedBox(
+                              height: 16.0,
+                            ),
+                            TextFormField(
+                              enabled: !this._isLoading,
+                              decoration:
+                                  decorate("Old Password", Icons.vpn_key, true),
+                              validator: (value) {
+                                return validate(value);
+                              },
+                              autovalidate: _autoValidate,
+                              onSaved: (val) => setState(() => _user.old = val),
+                              obscureText: this._invisiblePwd,
+                            ),
+                            SizedBox(
+                              height: 16.0,
+                            ),
+                            TextFormField(
+                              enabled: !this._isLoading,
+                              decoration:
+                                  decorate("New Password", Icons.vpn_key, true),
+                              validator: (value) {
+                                return validate(value);
+                              },
+                              autovalidate: _autoValidate,
+                              onSaved: (val) =>
+                                  setState(() => _user.psswd = val),
+                              obscureText: this._invisiblePwd,
+                            ),
+                            SizedBox(
+                              height: 16.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                MaterialButton(
+                                  child: Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.red[400],
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/');
+                                    storage.deleteAll();
+                                  },
+                                ),
+                                MaterialButton(
+                                  child: Text(
+                                    'Update',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.amber[600],
+                                    ),
+                                  ),
+                                  onPressed: this._isLoading
+                                      ? null
+                                      : () {
+                                          handleUpdate();
+                                        },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
-                    decoration: decorate("Contact", Icons.phone, false),
-                    validator: (value) {
-                      return validate(value);
-                    },
-                    autovalidate: _autoValidate,
-                    onSaved: (val) => _user.contact = int.parse(val),
                   ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  TextFormField(
-                    enabled: !this._isLoading,
-                    decoration: decorate("Old Password", Icons.vpn_key, true),
-                    validator: (value) {
-                      return validate(value);
-                    },
-                    autovalidate: _autoValidate,
-                    onSaved: (val) => setState(() => _user.old = val),
-                    obscureText: this._invisiblePwd,
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  TextFormField(
-                    enabled: !this._isLoading,
-                    decoration: decorate("New Password", Icons.vpn_key, true),
-                    validator: (value) {
-                      return validate(value);
-                    },
-                    autovalidate: _autoValidate,
-                    onSaved: (val) => setState(() => _user.psswd = val),
-                    obscureText: this._invisiblePwd,
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-              child: MaterialButton(
-                child: Text('Update'),
-                onPressed: this._isLoading
-                    ? null
-                    : () {
-                        handleUpdate();
-                      },
-              ),
-            ),
-          ],
-        ),
-        MaterialButton(
-          child: Text('Logout'),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/');
-            storage.deleteAll();
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 

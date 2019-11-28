@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:disaster_reporting/pages/partials/infoCard.dart';
 import 'package:disaster_reporting/controllers/infoController.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 class UnAuthFeed extends StatefulWidget {
   @override
@@ -25,44 +28,33 @@ class _UnAuthFeedState extends State<UnAuthFeed> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-              titleSpacing: 24.0,
-              pinned: true,
-              expandedHeight: 140.0,
-              flexibleSpace: ListView(
-                children: <Widget>[
-                  SizedBox(
-                    height: 60.0,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        MaterialButton(
-                          child: Text('Login'),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                        ),
-                        Text(' or '),
-                        MaterialButton(
-                          child: Text('Register'),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            backgroundColor: Colors.white,
+            titleSpacing: 6.0,
+            pinned: true,
+            expandedHeight: 200.0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.cyan[600],
+                size: 36.0,
               ),
-              title: Text(
-                'Feed',
-                style: TextStyle(fontSize: 36.0),
+              onPressed: () {
+                storage.deleteAll();
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+            title: Text(
+              'Feed',
+              style: TextStyle(fontSize: 36.0, color: Colors.cyan[600]),
+            ),
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                'assets/images/feed.jpg',
+                fit: BoxFit.cover,
               ),
-              floating: true,
-              shape: BeveledRectangleBorder(
-                borderRadius:
-                    BorderRadius.only(bottomRight: Radius.circular(20.0)),
-              )),
+            ),
+          ),
           SliverList(
             delegate: SliverChildListDelegate(
               _loading

@@ -44,91 +44,91 @@ class _LoginState extends State<Login> {
                   elevation: 5.0,
                   child: Builder(
                     builder: (context) => Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 24.0, horizontal: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    padding: EdgeInsets.all(0.0),
-                                    iconSize: 36.0,
-                                    icon: Icon(
-                                      Icons.arrow_back_ios,
-                                      color: Colors.black54,
-                                    ),
-                                    onPressed: () => Navigator.pop(context),
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 24.0, horizontal: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                IconButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  iconSize: 36.0,
+                                  icon: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.black54,
                                   ),
-                                  Text(
-                                    ' Login',
-                                    style: TextStyle(fontSize: 36.0),
-                                  ),
-                                ],
-                              ),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                Text(
+                                  ' Login',
+                                  style: TextStyle(fontSize: 36.0),
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 16.0),
-                              child: Column(
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 28.0,
-                                  ),
-                                  TextFormField(
-                                    enabled: !this._isLoading,
-                                    decoration: decorate(
-                                        "Licence", Icons.credit_card, false),
-                                    validator: (value) {
-                                      return validate(value);
-                                    },
-                                    autovalidate: _autoValidate,
-                                    onSaved: (val) => _user.licence = val,
-                                  ),
-                                  SizedBox(
-                                    height: 16.0,
-                                  ),
-                                  TextFormField(
-                                    enabled: !this._isLoading,
-                                    decoration: decorate(
-                                        "Password", Icons.vpn_key, true),
-                                    validator: (value) {
-                                      return validate(value);
-                                    },
-                                    autovalidate: _autoValidate,
-                                    onSaved: (val) =>
-                                        setState(() => _user.psswd = val),
-                                    obscureText: this._invisiblePwd,
-                                  ),
-                                  SizedBox(
-                                    height: 16.0,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      MaterialButton(
-                                        child: Text(
-                                          'Login',
-                                          style: TextStyle(
-                                            fontSize: 22.0,
-                                          ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 16.0),
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 28.0,
+                                ),
+                                TextFormField(
+                                  enabled: !this._isLoading,
+                                  decoration: decorate(
+                                      "Licence", Icons.credit_card, false),
+                                  validator: (value) {
+                                    return validate(value);
+                                  },
+                                  autovalidate: _autoValidate,
+                                  onSaved: (val) => _user.licence = val,
+                                ),
+                                SizedBox(
+                                  height: 16.0,
+                                ),
+                                TextFormField(
+                                  enabled: !this._isLoading,
+                                  decoration:
+                                      decorate("Password", Icons.vpn_key, true),
+                                  validator: (value) {
+                                    return validate(value);
+                                  },
+                                  autovalidate: _autoValidate,
+                                  onSaved: (val) =>
+                                      setState(() => _user.psswd = val),
+                                  obscureText: this._invisiblePwd,
+                                ),
+                                SizedBox(
+                                  height: 16.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    MaterialButton(
+                                      child: Text(
+                                        'Login',
+                                        style: TextStyle(
+                                          fontSize: 22.0,
                                         ),
-                                        onPressed: this._isLoading
-                                            ? null
-                                            : () {
-                                                handleLogin(context);
-                                              },
                                       ),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                      onPressed: this._isLoading
+                                          ? null
+                                          : () {
+                                              handleLogin(context);
+                                            },
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               )
