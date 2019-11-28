@@ -246,6 +246,7 @@ class _AddRecordState extends State<AddRecord> {
       color,
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
+    Navigator.pop(context);
   }
 
   String validate(value) {

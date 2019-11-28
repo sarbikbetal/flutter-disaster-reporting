@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 // Account and Auth
 import 'package:disaster_reporting/auth/login.dart';
 import 'package:disaster_reporting/auth/signup.dart';
@@ -29,7 +28,7 @@ class _LandingState extends State<Landing> {
       theme: ThemeData(
         primarySwatch: Colors.green,
         buttonTheme: ButtonThemeData(
-          minWidth: 140.0,
+          minWidth: 110.0,
           buttonColor: Colors.greenAccent,
         ),
       ),

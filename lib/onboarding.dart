@@ -48,6 +48,8 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 28.0,
+                              color: Colors.teal[600],
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
@@ -56,14 +58,17 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
                         height: 12.0,
                       ),
                       Text(
-                        'Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-                        style: TextStyle(fontSize: 16.0),
+                        'Login to your account or get one to start contributing, or you could just skip this step and still get your feed.',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black54,
+                        ),
                       ),
                       SizedBox(
                         height: 28.0,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           coolBtn("Login", "/login"),
                           coolBtn("Register", "/signup")
@@ -128,7 +133,7 @@ class _OnBoardingActivityState extends State<OnBoardingActivity> {
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 22.0,
+              fontSize: 18.0,
             ),
           ),
         ),
