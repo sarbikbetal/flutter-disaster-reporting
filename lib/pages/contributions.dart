@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:disaster_reporting/pages/partials/infoCard.dart';
 import 'package:disaster_reporting/controllers/infoController.dart';
 import 'dart:convert';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = new FlutterSecureStorage();
@@ -13,6 +14,7 @@ class Contributions extends StatefulWidget {
 }
 
 class _ContributionsState extends State<Contributions> {
+  final RefreshController _refreshController = RefreshController();
   bool _loading = true;
   List _jsonList = List();
 
@@ -23,68 +25,85 @@ class _ContributionsState extends State<Contributions> {
   }
 
   @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          backgroundColor: Colors.white,
-          titleSpacing: 24.0,
-          pinned: true,
-          expandedHeight: 200.0,
-          title: Text(
-            'Additions',
-            style: TextStyle(fontSize: 34.0, color: Colors.green[600]),
-          ),
-          floating: true,
-          flexibleSpace: FlexibleSpaceBar(
-            background: Image.asset(
-              'assets/images/contri.jpg',
-              fit: BoxFit.cover,
+    return SmartRefresher(
+      controller: _refreshController,
+      enablePullDown: true,
+      onRefresh: () async {
+        await getdata();
+        _refreshController.refreshCompleted();
+      },
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            titleSpacing: 24.0,
+            pinned: true,
+            expandedHeight: 200.0,
+            title: Text(
+              'Additions',
+              style: TextStyle(fontSize: 34.0, color: Colors.green[600]),
+            ),
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                'assets/images/contri.jpg',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate(
-            _loading
-                ? <Widget>[
-                    SizedBox(
-                      height: 220.0,
-                    ),
-                    Center(child: CircularProgressIndicator())
-                  ]
-                : _jsonList.isEmpty
-                    ? [
-                        SizedBox(
-                          height: 64.0,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text(
-                            "You have not made any contributions yet..",
-                            style: TextStyle(
-                                fontSize: 22.0, color: Colors.black54),
-                            textAlign: TextAlign.center,
+          SliverList(
+            delegate: SliverChildListDelegate(
+              _loading
+                  ? <Widget>[
+                      SizedBox(
+                        height: 220.0,
+                      ),
+                      Center(child: CircularProgressIndicator())
+                    ]
+                  : _jsonList.isEmpty
+                      ? [
+                          SizedBox(
+                            height: 64.0,
                           ),
-                        ),
-                        Center(
-                          child: Image.asset(
-                            'assets/images/nocontrib.jpg',
-                            fit: BoxFit.scaleDown,
+                          Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Text(
+                              "You have not made any contributions yet..",
+                              style: TextStyle(
+                                  fontSize: 22.0, color: Colors.black54),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        )
-                      ]
-                    : _jsonList
-                        .map((data) => InfoCard(
-                              info: data,
-                            ))
-                        .toList(),
-          ),
-        )
-      ],
+                          Center(
+                            child: Image.asset(
+                              'assets/images/nocontrib.jpg',
+                              fit: BoxFit.scaleDown,
+                            ),
+                          )
+                        ]
+                      : _jsonList
+                          .map((data) => InfoCard(
+                                info: data,
+                              ))
+                          .toList(),
+            ),
+          )
+        ],
+      ),
     );
   }
 
   getdata() async {
+    setState(() {
+      _loading = true;
+    });
     String token = await storage.read(key: 'auth_token');
     _jsonList = null;
     Map<String, dynamic> results = await getMyRecords(token);

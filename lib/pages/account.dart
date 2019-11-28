@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:disaster_reporting/models/user.dart';
 import 'package:disaster_reporting/controllers/userController.dart';
 import 'package:disaster_reporting/pages/partials/msgBar.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -21,6 +22,7 @@ class _MyAccountState extends State<MyAccount> {
   bool _invisiblePwd = true;
   bool _autoValidate = false;
 
+  final RefreshController _refreshController = RefreshController();
   var nameController = TextEditingController();
   var addressController = TextEditingController();
   var contactController = TextEditingController();
@@ -36,6 +38,7 @@ class _MyAccountState extends State<MyAccount> {
     nameController.dispose();
     addressController.dispose();
     contactController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -48,159 +51,174 @@ class _MyAccountState extends State<MyAccount> {
             alignment: Alignment(0.0, -1.0),
             fit: BoxFit.scaleDown),
       ),
-      child: ListView(
-        children: <Widget>[
-          Center(
-            child:
-                _isLoading ? LinearProgressIndicator() : SizedBox(height: 6.0),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(24.0, 160.0, 24.0, 0.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              elevation: 5.0,
-              child: Builder(
-                builder: (context) => Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 24.0, vertical: 4.0),
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 16.0),
-                            Text(
-                              _user != null
-                                  ? "Licence: " + _user.licence
-                                  : "Licence:",
-                              style: TextStyle(fontSize: 22.0),
-                            ),
-                            SizedBox(height: 16.0),
-                            TextFormField(
-                              enabled: !this._isLoading,
-                              controller: nameController,
-                              decoration:
-                                  decorate("Name", Icons.account_box, false),
-                              validator: (value) {
-                                return validate(value);
-                              },
-                              autovalidate: _autoValidate,
-                              onSaved: (val) => _user.name = val,
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            TextFormField(
-                              enabled: !this._isLoading,
-                              controller: addressController,
-                              decoration:
-                                  decorate("Address", Icons.home, false),
-                              validator: (value) {
-                                return validate(value);
-                              },
-                              autovalidate: _autoValidate,
-                              onSaved: (val) => _user.address = val,
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            TextFormField(
-                              enabled: !this._isLoading,
-                              controller: contactController,
-                              keyboardType: TextInputType.phone,
-                              inputFormatters: <TextInputFormatter>[
-                                WhitelistingTextInputFormatter.digitsOnly,
-                              ],
-                              decoration:
-                                  decorate("Contact", Icons.phone, false),
-                              validator: (value) {
-                                return validate(value);
-                              },
-                              autovalidate: _autoValidate,
-                              onSaved: (val) => _user.contact = int.parse(val),
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            TextFormField(
-                              enabled: !this._isLoading,
-                              decoration:
-                                  decorate("Old Password", Icons.vpn_key, true),
-                              validator: (value) {
-                                return validate(value);
-                              },
-                              autovalidate: _autoValidate,
-                              onSaved: (val) => setState(() => _user.old = val),
-                              obscureText: this._invisiblePwd,
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            TextFormField(
-                              enabled: !this._isLoading,
-                              decoration:
-                                  decorate("New Password", Icons.vpn_key, true),
-                              validator: (value) {
-                                return validate(value);
-                              },
-                              autovalidate: _autoValidate,
-                              onSaved: (val) =>
-                                  setState(() => _user.psswd = val),
-                              obscureText: this._invisiblePwd,
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                MaterialButton(
-                                  child: Text(
-                                    'Logout',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.red[400],
+      child: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        onRefresh: () {
+          getInfo();
+          _refreshController.refreshCompleted();
+        },
+        child: ListView(
+          children: <Widget>[
+            Center(
+              child: _isLoading
+                  ? LinearProgressIndicator()
+                  : SizedBox(height: 6.0),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.0, 160.0, 24.0, 0.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                elevation: 5.0,
+                child: Builder(
+                  builder: (context) => Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 4.0),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 16.0),
+                              Text(
+                                _user != null
+                                    ? "Licence: " + _user.licence
+                                    : "Licence:",
+                                style: TextStyle(fontSize: 22.0),
+                              ),
+                              SizedBox(height: 16.0),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                controller: nameController,
+                                decoration:
+                                    decorate("Name", Icons.account_box, false),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _user.name = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                controller: addressController,
+                                decoration:
+                                    decorate("Address", Icons.home, false),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) => _user.address = val,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                controller: contactController,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: <TextInputFormatter>[
+                                  WhitelistingTextInputFormatter.digitsOnly,
+                                ],
+                                decoration:
+                                    decorate("Contact", Icons.phone, false),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) =>
+                                    _user.contact = int.parse(val),
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration: decorate(
+                                    "Old Password", Icons.vpn_key, true),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) =>
+                                    setState(() => _user.old = val),
+                                obscureText: this._invisiblePwd,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                enabled: !this._isLoading,
+                                decoration: decorate(
+                                    "New Password", Icons.vpn_key, true),
+                                validator: (value) {
+                                  return validate(value);
+                                },
+                                autovalidate: _autoValidate,
+                                onSaved: (val) =>
+                                    setState(() => _user.psswd = val),
+                                obscureText: this._invisiblePwd,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  MaterialButton(
+                                    child: Text(
+                                      'Logout',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Colors.red[400],
+                                      ),
                                     ),
+                                    onPressed: () {
+                                      Navigator.pushReplacementNamed(
+                                          context, '/');
+                                      storage.deleteAll();
+                                    },
                                   ),
-                                  onPressed: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, '/');
-                                    storage.deleteAll();
-                                  },
-                                ),
-                                MaterialButton(
-                                  child: Text(
-                                    'Update',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.amber[600],
+                                  MaterialButton(
+                                    child: Text(
+                                      'Update',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Colors.amber[600],
+                                      ),
                                     ),
+                                    onPressed: this._isLoading
+                                        ? null
+                                        : () {
+                                            handleUpdate();
+                                          },
                                   ),
-                                  onPressed: this._isLoading
-                                      ? null
-                                      : () {
-                                          handleUpdate();
-                                        },
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   void getInfo() async {
+    this.setState(() {
+      this._isLoading = true;
+    });
     this._token = await storage.read(key: 'auth_token');
     Map<String, dynamic> result = await userInfo(this._user, this._token);
     if (result['err'] != null && mounted) {
