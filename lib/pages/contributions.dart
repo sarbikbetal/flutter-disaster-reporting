@@ -4,9 +4,6 @@ import 'package:disaster_reporting/pages/partials/infoCard.dart';
 import 'package:disaster_reporting/controllers/infoController.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-final storage = new FlutterSecureStorage();
 
 class Contributions extends StatefulWidget {
   @override
@@ -104,9 +101,12 @@ class _ContributionsState extends State<Contributions> {
     setState(() {
       _loading = true;
     });
-    String token = await storage.read(key: 'auth_token');
     _jsonList = null;
-    Map<String, dynamic> results = await getMyRecords(token);
+    Map<String, dynamic> results = await getMyRecords();
+    // InfoProvider db;
+    // await db.open("infos.db");
+    // await db.getAllRecord();
+    // await db.close();
 
     if (results['data'] != null) {
       _jsonList = jsonDecode(results['data']) as List;

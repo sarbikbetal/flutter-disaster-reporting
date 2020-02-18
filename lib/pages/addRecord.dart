@@ -3,9 +3,9 @@ import 'package:disaster_reporting/models/info.dart';
 import 'package:disaster_reporting/controllers/infoController.dart';
 import 'package:disaster_reporting/pages/partials/msgBar.dart';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+// final storage = new FlutterSecureStorage();
 
 class AddRecord extends StatefulWidget {
   @override
@@ -175,8 +175,12 @@ class _AddRecordState extends State<AddRecord> {
                                     ),
                                     onPressed: this._isLoading
                                         ? null
-                                        : () {
-                                            postRecord();
+                                        : () async {
+                                            // bool pop =
+                                            await postRecord();
+                                            // if (pop) {
+                                            //   Navigator.pop(context);
+                                            // }
                                           },
                                   ),
                                 ],
@@ -201,18 +205,19 @@ class _AddRecordState extends State<AddRecord> {
         context: context,
         initialDate: _selectedDate,
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime.now());
     if (picked != null && picked != _selectedDate)
       setState(() {
         _selectedDate = picked;
         dateController.text =
-            "${picked.year.toString()}.${picked.month.toString()}.${picked.day.toString()}";
+            "${picked.year.toString()}.${picked.month.toString().padLeft(2, '0')}.${picked.day.toString().padLeft(2, '0')}";
       });
   }
 
-  postRecord() async {
+  Future<bool> postRecord() async {
     String mssg;
     Color color;
+    bool pop = false;
 
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -220,9 +225,8 @@ class _AddRecordState extends State<AddRecord> {
       setState(() {
         this._isLoading = true;
       });
-      String token = await storage.read(key: 'auth_token');
 
-      Map<String, dynamic> result = await addRecord(_info, token);
+      Map<String, dynamic> result = await addRecord(_info);
 
       if (result['msg'] != null) {
         setState(() {
@@ -230,7 +234,9 @@ class _AddRecordState extends State<AddRecord> {
         });
         mssg = result['msg'];
         color = Colors.green[400];
+        pop = true;
       } else {
+        // If no internet connection
         setState(() {
           this._isLoading = false;
         });
@@ -246,7 +252,8 @@ class _AddRecordState extends State<AddRecord> {
       color,
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
-    Navigator.pop(context);
+    Future.delayed(Duration(milliseconds: 500));
+    return pop;
   }
 
   String validate(value) {
